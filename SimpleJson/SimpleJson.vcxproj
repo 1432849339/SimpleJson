@@ -51,6 +51,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
+    <RemoteRootDir>/home/dac/fengqianyong</RemoteRootDir>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -60,12 +62,121 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt />
+    <IncludePath>D:\VS_Project\SimpleJson\SimpleJson\glog\linux\glog;D:\VS_Project\SimpleJson\SimpleJson\stage;D:\VS_Project\SimpleJson\SimpleJson\glog\linux;D:\VS_Project\SimpleJson\SimpleJson\mysql;D:\VS_Project\SimpleJson\SimpleJson;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\MyLocalDataBase.cpp" />
+    <ClCompile Include="spdlog\fmt\bundled\format.cc" />
+    <ClCompile Include="spdlog\fmt\bundled\ostream.cc" />
+    <ClCompile Include="spdlog\fmt\bundled\posix.cc" />
+    <ClCompile Include="spdlog\fmt\bundled\printf.cc" />
+    <ClCompile Include="src\BaseFile.cpp" />
+    <ClCompile Include="src\connection_pool.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MyLocalDataBase.h" />
+    <ClInclude Include="mysql\cppconn\build_config.h" />
+    <ClInclude Include="mysql\cppconn\config.h" />
+    <ClInclude Include="mysql\cppconn\connection.h" />
+    <ClInclude Include="mysql\cppconn\datatype.h" />
+    <ClInclude Include="mysql\cppconn\driver.h" />
+    <ClInclude Include="mysql\cppconn\exception.h" />
+    <ClInclude Include="mysql\cppconn\metadata.h" />
+    <ClInclude Include="mysql\cppconn\parameter_metadata.h" />
+    <ClInclude Include="mysql\cppconn\prepared_statement.h" />
+    <ClInclude Include="mysql\cppconn\resultset.h" />
+    <ClInclude Include="mysql\cppconn\resultset_metadata.h" />
+    <ClInclude Include="mysql\cppconn\sqlstring.h" />
+    <ClInclude Include="mysql\cppconn\statement.h" />
+    <ClInclude Include="mysql\cppconn\warning.h" />
+    <ClInclude Include="mysql\database_engine.h" />
+    <ClInclude Include="mysql\db_connection.h" />
+    <ClInclude Include="mysql\mysql_connection.h" />
+    <ClInclude Include="mysql\mysql_driver.h" />
+    <ClInclude Include="mysql\mysql_error.h" />
+    <ClInclude Include="spdlog\async_logger.h" />
+    <ClInclude Include="spdlog\common.h" />
+    <ClInclude Include="spdlog\details\async_logger_impl.h" />
+    <ClInclude Include="spdlog\details\async_log_helper.h" />
+    <ClInclude Include="spdlog\details\file_helper.h" />
+    <ClInclude Include="spdlog\details\logger_impl.h" />
+    <ClInclude Include="spdlog\details\log_msg.h" />
+    <ClInclude Include="spdlog\details\mpmc_bounded_q.h" />
+    <ClInclude Include="spdlog\details\null_mutex.h" />
+    <ClInclude Include="spdlog\details\os.h" />
+    <ClInclude Include="spdlog\details\pattern_formatter_impl.h" />
+    <ClInclude Include="spdlog\details\registry.h" />
+    <ClInclude Include="spdlog\details\spdlog_impl.h" />
+    <ClInclude Include="spdlog\fmt\bundled\format.h" />
+    <ClInclude Include="spdlog\fmt\bundled\ostream.h" />
+    <ClInclude Include="spdlog\fmt\bundled\posix.h" />
+    <ClInclude Include="spdlog\fmt\bundled\printf.h" />
+    <ClInclude Include="spdlog\fmt\bundled\time.h" />
+    <ClInclude Include="spdlog\fmt\fmt.h" />
+    <ClInclude Include="spdlog\fmt\ostr.h" />
+    <ClInclude Include="spdlog\formatter.h" />
+    <ClInclude Include="spdlog\logger.h" />
+    <ClInclude Include="spdlog\sinks\android_sink.h" />
+    <ClInclude Include="spdlog\sinks\ansicolor_sink.h" />
+    <ClInclude Include="spdlog\sinks\base_sink.h" />
+    <ClInclude Include="spdlog\sinks\dist_sink.h" />
+    <ClInclude Include="spdlog\sinks\file_sinks.h" />
+    <ClInclude Include="spdlog\sinks\msvc_sink.h" />
+    <ClInclude Include="spdlog\sinks\null_sink.h" />
+    <ClInclude Include="spdlog\sinks\ostream_sink.h" />
+    <ClInclude Include="spdlog\sinks\sink.h" />
+    <ClInclude Include="spdlog\sinks\stdout_sinks.h" />
+    <ClInclude Include="spdlog\sinks\syslog_sink.h" />
+    <ClInclude Include="spdlog\sinks\wincolor_sink.h" />
+    <ClInclude Include="spdlog\spdlog.h" />
+    <ClInclude Include="spdlog\tweakme.h" />
+    <ClInclude Include="src\BaseFile.h" />
+    <ClInclude Include="src\connection_pool.h" />
+    <ClInclude Include="src\json_stream.hpp" />
+    <ClInclude Include="rapidjson\document.h" />
+    <ClInclude Include="rapidjson\filestream.h" />
+    <ClInclude Include="rapidjson\internal\pow10.h" />
+    <ClInclude Include="rapidjson\internal\stack.h" />
+    <ClInclude Include="rapidjson\internal\strfunc.h" />
+    <ClInclude Include="rapidjson\prettywriter.h" />
+    <ClInclude Include="rapidjson\rapidjson.h" />
+    <ClInclude Include="rapidjson\reader.h" />
+    <ClInclude Include="rapidjson\stringbuffer.h" />
+    <ClInclude Include="rapidjson\writer.h" />
+    <ClInclude Include="stage\actor.h" />
+    <ClInclude Include="stage\actor_context.h" />
+    <ClInclude Include="stage\context.h" />
+    <ClInclude Include="stage\czmq_header.h" />
+    <ClInclude Include="stage\event.h" />
+    <ClInclude Include="stage\ibconfig.h" />
+    <ClInclude Include="stage\iblog.h" />
+    <ClInclude Include="stage\ibprotocol.h" />
+    <ClInclude Include="stage\ibuuid.h" />
+    <ClInclude Include="stage\isonbase.h" />
+    <ClInclude Include="stage\loop.h" />
+    <ClInclude Include="stage\memdb_connection.h" />
+    <ClInclude Include="stage\memdb_engine.h" />
+    <ClInclude Include="stage\message.h" />
+    <ClInclude Include="stage\owership.h" />
+    <ClInclude Include="stage\proxy.h" />
+    <ClInclude Include="stage\socket.h" />
+    <ClInclude Include="stage\stage.h" />
+    <ClInclude Include="stage\thread.h" />
+    <ClInclude Include="stage\util.h" />
+    <ClInclude Include="stage\writelog.h" />
   </ItemGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>/home/dac/fengqianyong/SimpleJson/stage;/home/dac/fengqianyong/SimpleJson/mysql;/home/dac/fengqianyong/SimpleJson;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>/home/dac/fengqianyong/Mylib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LibraryDependencies>mysqlcppconn</LibraryDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>
