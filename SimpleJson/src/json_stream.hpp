@@ -40,38 +40,41 @@ public:
 	JsonStream() = default;
 	JsonStream(std::string messege) :m_messege(messege)
 	{
-		//m_document.SetObject();
+		is_tgw_conn = false;
 	}
-	virtual void  DocumentTostring(rapidjson::Document& req_head, std::string& out)
+	void set_messge(std::string message)
 	{
-		rapidjson::StringBuffer  buffer;
-		rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-		req_head.Accept(writer);
-		std::string reststring = buffer.GetString();
+		m_messege = message;
+		is_tgw_conn = false;
 	}
 	virtual JsonException ParaseTgwHead()
 	{
 		m_document.Parse<0>(m_messege.c_str());
 		if (m_document.HasParseError())
 		{
+			LOG(ERROR) << m_document.GetParseError();
 			return JsonException(-1, m_document.GetParseError());
 		}
 		if (!m_document.IsObject())
 		{
+			LOG(ERROR) << "请求信息不是json对象";
 			return JsonException(-2, "请求信息不是json对象");
 		}
 		if (!m_document.HasMember("tgw"))//后端请求:直连
 		{
+			LOG(WARNING) << "后端直连";
 			return JsonException(0, "后端直连");
 		}
 		else
 		{
 			if (!m_document["tgw"].IsObject())
 			{
+				LOG(ERROR) << "tgw头不是json对象";
 				return JsonException(-3, "tgw头不是json对象");
 			}
 			else
 			{
+				is_tgw_conn = true;
 				rapidjson::Value tgw_head;
 				tgw_head.SetObject();
 				tgw_head = m_document["tgw"];
@@ -82,6 +85,7 @@ public:
 					if (!tgw_head.HasMember(tgw_head_int[i]) || !tgw_head[tgw_head_int[i]].IsInt())
 					{
 						std::string temp = std::string("tgw头中缺少字段:") + tgw_head_int[i];
+						LOG(ERROR) << temp;
 						return JsonException(-4, temp);
 					}
 				}
@@ -90,6 +94,7 @@ public:
 					if (!tgw_head.HasMember(tgw_head_char[i]) || !tgw_head[tgw_head_char[i]].IsString())
 					{
 						std::string temp = std::string("tgw头中缺少字段:") + tgw_head_char[i];
+						LOG(ERROR) << temp;
 						return JsonException(-4, temp);
 					}
 				}
@@ -109,14 +114,16 @@ public:
 	}
 	virtual JsonException ParaseReqHead()
 	{
-		m_document.Clear();
-		m_document.Parse<0>(m_messege.c_str());
+		//m_document.Clear();
+		//m_document.Parse<0>(m_messege.c_str());
 		if (m_document.HasParseError())
 		{
+			LOG(ERROR) << m_document.GetParseError();
 			return JsonException(-1, m_document.GetParseError());
 		}
 		if (!m_document.IsObject())
 		{
+			LOG(ERROR) << "请求信息不是json对象";
 			return JsonException(-2, "请求信息不是json对象");
 		}
 		else
@@ -127,6 +134,7 @@ public:
 			{
 				if (!m_document.HasMember("data"))
 				{
+					LOG(ERROR) << "请求信息没有data字段";
 					return JsonException(-5, "请求信息没有data字段");
 				}
 				req_head = m_document["data"];
@@ -149,15 +157,18 @@ public:
 				if (!req_head.HasMember(req_tgwint[i]) || !req_head[req_tgwint[i]].IsInt())
 				{
 					std::string temp = std::string("没有字段: ") + req_tgwint[i];
+					LOG(ERROR) << temp;
 					return JsonException(-7, temp);
 				}
 			}
-			if (!m_document.HasMember("SecurityID") || !req_head["SecurityID"].IsInt64())
+			if (!req_head.HasMember("SecurityID") || !req_head["SecurityID"].IsInt64())
 			{
+				LOG(ERROR) << "没有字段: SecurityID";
 				return JsonException(-7, "没有字段: SecurityID");
 			}
-			if (!m_document.HasMember("Field") || !req_head["Field"].IsString())
+			if (!req_head.HasMember("Field") || !req_head["Field"].IsString())
 			{
+				LOG(ERROR) << "没有字段: Field";
 				return JsonException(-7, "没有字段: Field");
 			}
 			m_reqhead.Seqno = req_head["Seqno"].GetInt();
@@ -218,8 +229,8 @@ public:
 				m_parameter.insert(COMPONENT.begin(), COMPONENT.end());
 				break;
 			default:
-				std::string temp = "TableType 超出范围";
-				return JsonException(-8, temp);
+				LOG(ERROR) << "TableType 超出范围";
+				return JsonException(-8, "TableType 超出范围");
 				break;
 			}
 		}
@@ -251,6 +262,22 @@ public:
 		}
 		return JsonException(0, "");
 	}
+	TgwHead& GetTgwHead()
+	{
+		return m_tgwhead;
+	}
+	ReqHead& GetReqHead()
+	{
+		return m_reqhead;
+	}
+	std::map<std::string, int32_t>& GetParameter()
+	{
+		return m_parameter;
+	}
+	bool ConnectByTgw()
+	{
+		return is_tgw_conn;
+	}
 protected:
 	JsonException GetType(std::string& lable)
 	{
@@ -275,6 +302,7 @@ protected:
 			else
 			{
 				std::string temp = std::string("没有字段:") + lable;
+				LOG(ERROR) << temp;
 				return JsonException(-9, temp);
 			}
 		};
@@ -313,12 +341,14 @@ protected:
 			break;
 		default:
 			std::string temp = "TableType 超出范围";
+			LOG(ERROR) << temp;
 			return JsonException(-8, temp);
 			break;
 		}
 		return ret;
 	}
 private:
+	bool								is_tgw_conn;
 	std::string							m_messege;
 	rapidjson::Document					m_document;
 	TgwHead								m_tgwhead;

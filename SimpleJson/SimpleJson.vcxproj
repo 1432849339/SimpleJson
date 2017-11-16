@@ -64,19 +64,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt />
-    <IncludePath>D:\VS_Project\SimpleJson\SimpleJson\glog\linux\glog;D:\VS_Project\SimpleJson\SimpleJson\stage;D:\VS_Project\SimpleJson\SimpleJson\glog\linux;D:\VS_Project\SimpleJson\SimpleJson\mysql;D:\VS_Project\SimpleJson\SimpleJson;$(IncludePath)</IncludePath>
+    <IncludePath>D:\VS_Project\SimpleJson\SimpleJson\linux;D:\VS_Project\SimpleJson\SimpleJson\linux\glog;D:\VS_Project\SimpleJson\SimpleJson\glog\linux\glog;D:\VS_Project\SimpleJson\SimpleJson\stage;D:\VS_Project\SimpleJson\SimpleJson\glog\linux;D:\VS_Project\SimpleJson\SimpleJson\mysql;D:\VS_Project\SimpleJson\SimpleJson;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="src\MyLocalDataBase.cpp" />
-    <ClCompile Include="spdlog\fmt\bundled\format.cc" />
-    <ClCompile Include="spdlog\fmt\bundled\ostream.cc" />
-    <ClCompile Include="spdlog\fmt\bundled\posix.cc" />
-    <ClCompile Include="spdlog\fmt\bundled\printf.cc" />
     <ClCompile Include="src\BaseFile.cpp" />
     <ClCompile Include="src\connection_pool.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\UKServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="linux\glog\logging.h" />
+    <ClInclude Include="linux\glog\log_severity.h" />
+    <ClInclude Include="linux\glog\raw_logging.h" />
+    <ClInclude Include="linux\glog\stl_logging.h" />
+    <ClInclude Include="linux\glog\vlog_is_on.h" />
     <ClInclude Include="src\MyLocalDataBase.h" />
     <ClInclude Include="mysql\cppconn\build_config.h" />
     <ClInclude Include="mysql\cppconn\config.h" />
@@ -97,42 +99,6 @@
     <ClInclude Include="mysql\mysql_connection.h" />
     <ClInclude Include="mysql\mysql_driver.h" />
     <ClInclude Include="mysql\mysql_error.h" />
-    <ClInclude Include="spdlog\async_logger.h" />
-    <ClInclude Include="spdlog\common.h" />
-    <ClInclude Include="spdlog\details\async_logger_impl.h" />
-    <ClInclude Include="spdlog\details\async_log_helper.h" />
-    <ClInclude Include="spdlog\details\file_helper.h" />
-    <ClInclude Include="spdlog\details\logger_impl.h" />
-    <ClInclude Include="spdlog\details\log_msg.h" />
-    <ClInclude Include="spdlog\details\mpmc_bounded_q.h" />
-    <ClInclude Include="spdlog\details\null_mutex.h" />
-    <ClInclude Include="spdlog\details\os.h" />
-    <ClInclude Include="spdlog\details\pattern_formatter_impl.h" />
-    <ClInclude Include="spdlog\details\registry.h" />
-    <ClInclude Include="spdlog\details\spdlog_impl.h" />
-    <ClInclude Include="spdlog\fmt\bundled\format.h" />
-    <ClInclude Include="spdlog\fmt\bundled\ostream.h" />
-    <ClInclude Include="spdlog\fmt\bundled\posix.h" />
-    <ClInclude Include="spdlog\fmt\bundled\printf.h" />
-    <ClInclude Include="spdlog\fmt\bundled\time.h" />
-    <ClInclude Include="spdlog\fmt\fmt.h" />
-    <ClInclude Include="spdlog\fmt\ostr.h" />
-    <ClInclude Include="spdlog\formatter.h" />
-    <ClInclude Include="spdlog\logger.h" />
-    <ClInclude Include="spdlog\sinks\android_sink.h" />
-    <ClInclude Include="spdlog\sinks\ansicolor_sink.h" />
-    <ClInclude Include="spdlog\sinks\base_sink.h" />
-    <ClInclude Include="spdlog\sinks\dist_sink.h" />
-    <ClInclude Include="spdlog\sinks\file_sinks.h" />
-    <ClInclude Include="spdlog\sinks\msvc_sink.h" />
-    <ClInclude Include="spdlog\sinks\null_sink.h" />
-    <ClInclude Include="spdlog\sinks\ostream_sink.h" />
-    <ClInclude Include="spdlog\sinks\sink.h" />
-    <ClInclude Include="spdlog\sinks\stdout_sinks.h" />
-    <ClInclude Include="spdlog\sinks\syslog_sink.h" />
-    <ClInclude Include="spdlog\sinks\wincolor_sink.h" />
-    <ClInclude Include="spdlog\spdlog.h" />
-    <ClInclude Include="spdlog\tweakme.h" />
     <ClInclude Include="src\BaseFile.h" />
     <ClInclude Include="src\connection_pool.h" />
     <ClInclude Include="src\json_stream.hpp" />
@@ -167,14 +133,15 @@
     <ClInclude Include="stage\thread.h" />
     <ClInclude Include="stage\util.h" />
     <ClInclude Include="stage\writelog.h" />
+    <ClInclude Include="src\UKServer.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>/home/dac/fengqianyong/SimpleJson/stage;/home/dac/fengqianyong/SimpleJson/mysql;/home/dac/fengqianyong/SimpleJson;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>/home/dac/fengqianyong/SimpleJson/stage;/home/dac/fengqianyong/SimpleJson/mysql;/home/dac/fengqianyong/SimpleJson/linux/glog;/home/dac/fengqianyong/SimpleJson/linux;/home/dac/fengqianyong/SimpleJson</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>/home/dac/fengqianyong/Mylib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <LibraryDependencies>mysqlcppconn</LibraryDependencies>
+      <AdditionalLibraryDirectories>/home/dac/fengqianyong/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LibraryDependencies>mysqlcppconn;zmq;czmq;sodium;ibcpp;glog;m;pthread;</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

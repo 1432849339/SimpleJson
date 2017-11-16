@@ -26,15 +26,31 @@
 #include <vector>
 #include <stdexcept>
 #include <exception>
-#include "spdlog/spdlog.h"
 #include "rapidjson/filestream.h"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include "iblog.h"
+#include "isonbase.h"
+#include "context.h"
+#include "actor.h"
+#include "stage.h"
+#include "event.h"
+#include "ibprotocol.h"
+#include "socket.h"
+#include "message.h"
+
+#define  DEBUG
+#define  _CRT_SECURE_NO_WARNINGS
+#define  UPDATE_TIME_HOURS		14
+#define  UPDATE_TIME_MIN		55
+#define  DATE_DISTANCE			1
+#define  STRNCPY(DES,SOUCE)  strncpy(DES,SOUCE,sizeof(DES)-1)
 
 using namespace std;
 using namespace sql;
 using namespace chrono;
+using namespace ison::base;
 
 struct TgwHead
 {
@@ -83,8 +99,8 @@ struct contract
 	char	max_fluctuation_limit_desc[256];
 	char	contract_month_desc[256];
 	char	trading_time_desc[256];
-	char	last_trading_date_desc[64];
-	char	delivery_date_desc[64];
+	char	last_trading_date_desc[128];
+	char	delivery_date_desc[128];
 	char	delivery_grade_desc[512];
 	char	delivery_points_desc[64];
 	char	min_trading_margin_desc[512];
@@ -551,6 +567,103 @@ public:
 private:
 	map<string, void*>	ptr;
 	dailyclear			_data;
+};
+
+class Market
+{
+public:
+	Market() = default;
+
+	Market(market& data)
+	{
+		_data = data;
+	}
+
+	Market(Market& data)
+	{
+		_data = data._data;
+	}
+
+	~Market()
+	{
+		if (!ptr.empty())
+		{
+			ptr.clear();
+		}
+	}
+
+	void operator=(Market& data)
+	{
+		_data = data._data;
+		if (!ptr.empty())
+		{
+			ptr.clear();
+		}
+	}
+
+	void show()
+	{
+		cout << GetUInt("marketid") << "\t" << GetString("marketchname") << endl;
+	}
+
+	void Init()
+	{
+		ptr["market_id"] = (void*)&_data.market_id;
+		ptr["currency_id"] = (void*)&_data.currency_id;
+		ptr["time_zone"] = (void*)&_data.time_zone;
+		ptr["brief_code"] = (void*)&_data.brief_code;
+		ptr["trading_time"] = (void*)&_data.trading_time;
+		ptr["chinese_name"] = (void*)&_data.chinese_name;
+		ptr["english_name"] = (void*)&_data.english_name;
+	}
+	double GetDouble(string lable)
+	{
+		auto it = ptr.find(lable);
+		if (it != ptr.end())
+		{
+			return *(double*)(it->second);
+		}
+		return -1.0;
+	}
+	int GetInt(string lable)
+	{
+		auto it = ptr.find(lable);
+		if (it != ptr.end())
+		{
+			return *(int*)(it->second);
+		}
+		return -1;
+	}
+	unsigned int GetUInt(string lable)
+	{
+		auto it = ptr.find(lable);
+		if (it != ptr.end())
+		{
+			return *(unsigned int*)(it->second);
+		}
+		return -1;
+	}
+	string GetString(string lable)
+	{
+		auto it = ptr.find(lable);
+		if (it != ptr.end())
+		{
+			return string((char*)(it->second));
+		}
+		return string("");
+	}
+	int64_t GetInt64_t(string lable)
+	{
+		auto it = ptr.find(lable);
+		if (it != ptr.end())
+		{
+			return *(int64_t*)(it->second);
+		}
+		return -1;
+	}
+private:
+	map<string, void*>	ptr;
+	market			_data;
 };
 
 class Secumaster
@@ -1173,6 +1286,96 @@ public:
 private:
 	map<string, void*>			ptr;
 	component					_data;
+};
+
+struct GetTrday
+{
+public:
+	GetTrday()
+	{
+		pstm = nullptr;
+	}
+
+	int operator()()
+	{
+		tt = time(NULL);
+		pstm = localtime(&tt);
+		if (pstm->tm_wday == 6)//星期6
+		{
+			tt -= 1 * 24 * 60 * 60;
+		}
+		else if (pstm->tm_wday == 0)//星期天
+		{
+			tt -= 2 * 24 * 60 * 60;
+		}
+		else if (pstm->tm_wday == 1)//周一
+		{
+			if (pstm->tm_hour < UPDATE_TIME_HOURS)
+			{
+				tt -= 3 * 24 * 60 * 60;
+			}
+			else if (pstm->tm_hour == UPDATE_TIME_HOURS && pstm->tm_min < UPDATE_TIME_MIN)
+			{
+				tt -= 3 * 24 * 60 * 60;
+			}
+		}
+		else//周二到周五
+		{
+			if (pstm->tm_hour < UPDATE_TIME_HOURS)//判断是否,到达更新时间,没到的交易日为上一天
+			{
+				tt -= 1 * 24 * 60 * 60;
+			}
+			else if (pstm->tm_hour == UPDATE_TIME_HOURS && pstm->tm_min < UPDATE_TIME_MIN)
+			{
+				tt -= 1 * 24 * 60 * 60;
+			}
+		}
+		pstm = localtime(&tt);
+		int year = pstm->tm_year + 1900;
+		int mon = pstm->tm_mon + 1;
+		int day = pstm->tm_mday;
+		return year * 10000 + mon * 100 + day;
+	}
+	int operator-(int day)
+	{
+		(*this)();
+		tt -= day * 24 * 60 * 60;
+		pstm = localtime(&tt);
+		int year = pstm->tm_year + 1900;
+		int mon = pstm->tm_mon + 1;
+		day = pstm->tm_mday;
+		return year * 10000 + mon * 100 + day;
+	}
+	int operator+(int day)
+	{
+		(*this)();
+		tt += day * 24 * 60 * 60;
+		pstm = localtime(&tt);
+		int year = pstm->tm_year + 1900;
+		int mon = pstm->tm_mon + 1;
+		day = pstm->tm_mday;
+		return year * 10000 + mon * 100 + day;
+	}
+
+	int64_t GetSecond()
+	{
+		return time(nullptr);
+	}
+
+	int64_t GetMsTime(int ymd, int hmsu)
+	{
+		struct tm timeinfo = { 0 };
+		timeinfo.tm_year = ymd / 10000 - 1900;
+		timeinfo.tm_mon = (ymd % 10000) / 100 - 1;
+		timeinfo.tm_mday = ymd % 100;
+		timeinfo.tm_hour = hmsu / 10000;
+		timeinfo.tm_min = (hmsu % 10000) / 100;
+		timeinfo.tm_sec = ((hmsu % 10000) % 100);
+		return mktime(&timeinfo);
+	}
+private:
+	struct tm*	pstm = nullptr;
+	time_t		tt;
 };
 
 #endif // !__BASEFILE_H__
