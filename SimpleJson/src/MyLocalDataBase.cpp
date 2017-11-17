@@ -12,10 +12,13 @@ contract_local_sql::contract_local_sql()
 	Statement*			state = nullptr;
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
-	con = connpool->GetConnection();
-	state = con->createStatement();
 	sprintf(Sql, "SELECT * FROM %s;", map_code_name[1].c_str());
+	con = connpool->GetConnection();
+	
+	state = con->createStatement();
+	
 	rs = state->executeQuery(Sql);
+	
 	while (rs->next())
 	{
 		contract* temp_data = new contract{ 0 };
@@ -96,10 +99,13 @@ currency_local_sql::currency_local_sql()
 	Statement*			state = nullptr;
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
-	con = connpool->GetConnection();
-	state = con->createStatement();
 	sprintf(Sql, "SELECT * FROM %s;", map_code_name[2].c_str());
+	con = connpool->GetConnection();
+	
+	state = con->createStatement();
+	
 	rs = state->executeQuery(Sql);
+	
 	while (rs->next())
 	{
 		currency* temp_data = new currency{ 0 };
@@ -170,8 +176,11 @@ dailyclear_local_sql::dailyclear_local_sql()
 		sql::ResultSet*		rs = nullptr;
 		// 从连接池中获取mysql连接
 		con = connpool->GetConnection();
+		
 		state = con->createStatement();
+		
 		rs = state->executeQuery(Sql);
+		
 		while (rs->next())
 		{
 			dailyclear* temp_data = new dailyclear{ 0 };
@@ -279,10 +288,14 @@ Market_local_sql::Market_local_sql()
 	Statement*			state = nullptr;
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
-	con = connpool->GetConnection();
-	state = con->createStatement();
 	sprintf(Sql, "SELECT * FROM %s;", map_code_name[4].c_str());
+	con = connpool->GetConnection();
+	
+	state = con->createStatement();
+	
 	rs = state->executeQuery(Sql);
+	
+	
 	while (rs->next())
 	{
 		market* temp_data = new market{ 0 };
@@ -356,8 +369,11 @@ secumatre_local_sql::secumatre_local_sql()
 		sql::ResultSet*		rs = nullptr;
 		// 从连接池中获取mysql连接
 		con = connpool->GetConnection();
+		
 		state = con->createStatement();
+		
 		rs = state->executeQuery(Sql);
+		
 		while (rs->next())
 		{
 			secumaster* temp_secumaster = new secumaster{ 0 };
@@ -434,7 +450,6 @@ void secumatre_local_sql::clear()
 {
 	_index.clear();
 }
-
 bool secumatre_local_sql::find(int market_id, int64_t ukey, int date, vector<shared_ptr<Secumaster>>& result)
 {
 	if (ukey != 0)
@@ -544,7 +559,6 @@ bool secumatre_local_sql::find(int market_id, int64_t ukey, int date, vector<sha
 	return false;
 }
 
-
 tssyscalender_local_sql::tssyscalender_local_sql()
 {
 	vector<tssyscalender*>  local_data;
@@ -552,11 +566,15 @@ tssyscalender_local_sql::tssyscalender_local_sql()
 	Statement*			state = nullptr;
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
-	con = connpool->GetConnection();
-	state = con->createStatement();
 	char Sql[10240]{ 0 };
 	sprintf(Sql, "SELECT * FROM %s;", map_code_name[6].c_str());
+	con = connpool->GetConnection();
+	
+	state = con->createStatement();
+	
 	rs = state->executeQuery(Sql);
+	
+	
 	while (rs->next())
 	{
 		tssyscalender* temp_data = new tssyscalender;
@@ -622,8 +640,11 @@ ukey_local_sql::ukey_local_sql()
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
 	con = connpool->GetConnection();
+	
 	state = con->createStatement();
+	
 	rs = state->executeQuery(Sql);
+	
 	while (rs->next())
 	{
 		ukey* temp_data = new ukey{ 0 };
@@ -737,8 +758,11 @@ uktype_local_sql::uktype_local_sql()
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
 	con = connpool->GetConnection();
+	
 	state = con->createStatement();
+	
 	rs = state->executeQuery(Sql);
+	
 	while (rs->next())
 	{
 		uktype* temp_data = new uktype{ 0 };
@@ -792,8 +816,11 @@ calendar_local_sql::calendar_local_sql()
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
 	con = connpool->GetConnection();
+	
 	state = con->createStatement();
+	
 	rs = state->executeQuery(Sql);
+	
 	while (rs->next())
 	{
 		calendar* temp_data = new calendar{ 0 };
@@ -891,8 +918,11 @@ component_local_sql::component_local_sql()
 		sql::ResultSet*		rs = nullptr;
 		// 从连接池中获取mysql连接
 		con = connpool->GetConnection();
+		
 		state = con->createStatement();
+		
 		rs = state->executeQuery(Sql);
+		
 		while (rs->next())
 		{
 			component* temp_data = new component{ 0 };

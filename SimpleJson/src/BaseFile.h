@@ -18,6 +18,7 @@
 #include <vector>
 #include <mutex>
 #include <chrono>
+#include <iomanip>  
 #include <string>
 #include <tuple>
 #include <map>
@@ -42,9 +43,9 @@
 
 #define  DEBUG
 #define  _CRT_SECURE_NO_WARNINGS
-#define  UPDATE_TIME_HOURS		14
-#define  UPDATE_TIME_MIN		55
-#define  DATE_DISTANCE			1
+#define  UPDATE_TIME_HOURS		9
+#define  UPDATE_TIME_MIN		0
+#define  DATE_DISTANCE			7
 #define  STRNCPY(DES,SOUCE)  strncpy(DES,SOUCE,sizeof(DES)-1)
 
 using namespace std;
@@ -256,30 +257,26 @@ struct  component
 	double			fixed_substitute_money;
 };
 
-class Contract
-{
+template<typename T>
+class LocalData {
 public:
-	Contract() = default;
-
-	Contract(contract& data)
+	LocalData() = default;
+	LocalData(T& data)
 	{
 		_data = data;
 	}
-
-	Contract(Contract& data)
+	LocalData(LocalData& data)
 	{
 		_data = data._data;
 	}
-
-	~Contract()
+	~LocalData()
 	{
 		if (!ptr.empty())
 		{
 			ptr.clear();
 		}
 	}
-
-	void operator=(Contract& data)
+	void operator=(LocalData& data)
 	{
 		_data = data._data;
 		if (!ptr.empty())
@@ -287,36 +284,7 @@ public:
 			ptr.clear();
 		}
 	}
-
-	void show()
-	{
-		cout << GetInt("contract_id") << "\t" << GetString("chinese_name") << "\t" << GetString("english_name") << "\t" << GetInt("list_date") << endl;
-	}
-
-	void Init()
-	{
-		ptr["contract_id"] = (void*)&_data.contract_id;
-		ptr["contract_code"] = (void*)&_data.contract_code;
-		ptr["chinese_name"] = (void*)&_data.chinese_name;
-		ptr["english_name"] = (void*)&_data.english_name;
-		ptr["multiplier_desc"] = (void*)&_data.multiplier_desc;
-		ptr["price_unit_desc"] = (void*)&_data.price_unit_desc;
-		ptr["tick_size_desc"] = (void*)&_data.tick_size_desc;
-		ptr["max_fluctuation_limit_desc"] = (void*)&_data.max_fluctuation_limit_desc;
-		ptr["contract_month_desc"] = (void*)&_data.contract_month_desc;
-		ptr["trading_time_desc"] = (void*)&_data.trading_time_desc;
-		ptr["last_trading_date_desc"] = (void*)&_data.last_trading_date_desc;
-		ptr["delivery_date_desc"] = (void*)&_data.delivery_date_desc;
-		ptr["delivery_grade_desc"] = (void*)&_data.delivery_grade_desc;
-		ptr["delivery_points_desc"] = (void*)&_data.delivery_points_desc;
-		ptr["min_trading_margin_desc"] = (void*)&_data.min_trading_margin_desc;
-		ptr["trading_fee_desc"] = (void*)&_data.trading_fee_desc;
-		ptr["delivery_methods_desc"] = (void*)&_data.delivery_methods_desc;
-		ptr["list_date"] = (void*)&_data.list_date;
-		ptr["delist_date"] = (void*)&_data.delist_date;
-		ptr["currency_id"] = (void*)&_data.currency_id;
-		ptr["contract_desc"] = (void*)&_data.contract_desc;
-	}
+public:
 	double GetDouble(string lable)
 	{
 		auto it = ptr.find(lable);
@@ -362,932 +330,182 @@ public:
 		}
 		return -1;
 	}
+	void Init();
 private:
 	map<string, void*>	ptr;
-	contract			_data;
+	T					_data;
 };
 
-class Currency
+template<>
+inline void LocalData<contract>::Init()
 {
-public:
-	Currency() = default;
-
-	Currency(currency& data)
-	{
-		_data = data;
-	}
-
-	Currency(Currency& data)
-	{
-		_data = data._data;
-	}
-
-	~Currency()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Currency& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetUInt("currency_id") << "\t" << GetString("chinese_name") << endl;
-	}
-
-	void Init()
-	{
-		ptr["currency_id"] = (void*)&_data.currency_id;
-		ptr["brief_code"] = (void*)&_data.brief_code;
-		ptr["chinese_name"] = (void*)&_data.chinese_name;
-		ptr["english_name"] = (void*)&_data.english_name;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-private:
-	map<string, void*>	ptr;
-	currency			_data;
-};
-
-class Dailyclear
+	ptr["contract_id"] = (void*)&_data.contract_id;
+	ptr["contract_code"] = (void*)&_data.contract_code;
+	ptr["chinese_name"] = (void*)&_data.chinese_name;
+	ptr["english_name"] = (void*)&_data.english_name;
+	ptr["multiplier_desc"] = (void*)&_data.multiplier_desc;
+	ptr["price_unit_desc"] = (void*)&_data.price_unit_desc;
+	ptr["tick_size_desc"] = (void*)&_data.tick_size_desc;
+	ptr["max_fluctuation_limit_desc"] = (void*)&_data.max_fluctuation_limit_desc;
+	ptr["contract_month_desc"] = (void*)&_data.contract_month_desc;
+	ptr["trading_time_desc"] = (void*)&_data.trading_time_desc;
+	ptr["last_trading_date_desc"] = (void*)&_data.last_trading_date_desc;
+	ptr["delivery_date_desc"] = (void*)&_data.delivery_date_desc;
+	ptr["delivery_grade_desc"] = (void*)&_data.delivery_grade_desc;
+	ptr["delivery_points_desc"] = (void*)&_data.delivery_points_desc;
+	ptr["min_trading_margin_desc"] = (void*)&_data.min_trading_margin_desc;
+	ptr["trading_fee_desc"] = (void*)&_data.trading_fee_desc;
+	ptr["delivery_methods_desc"] = (void*)&_data.delivery_methods_desc;
+	ptr["list_date"] = (void*)&_data.list_date;
+	ptr["delist_date"] = (void*)&_data.delist_date;
+	ptr["currency_id"] = (void*)&_data.currency_id;
+	ptr["contract_desc"] = (void*)&_data.contract_desc;
+}
+template<>
+inline void LocalData<currency>::Init()
 {
-public:
-	Dailyclear() = default;
-
-	Dailyclear(dailyclear& data)
-	{
-		_data = data;
-	}
-
-	Dailyclear(Dailyclear& data)
-	{
-		_data = data._data;
-	}
-
-	~Dailyclear()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Dailyclear& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetUInt("ukcode") << "\t" << GetInt("markecode") << endl;
-	}
-
-	void Init()
-	{
-		ptr["ukey"] = (void*)&_data.ukey;
-		ptr["marke_code"] = (void*)&_data.marke_code;
-		ptr["trading_day"] = (void*)&_data.trading_day;
-		ptr["upper_limit"] = (void*)&_data.upper_limit;
-		ptr["lower_limit"] = (void*)&_data.lower_limit;
-		ptr["pre_settlement"] = (void*)&_data.pre_settlement;
-		ptr["pre_close"] = (void*)&_data.pre_close;
-		ptr["pre_interest"] = (void*)&_data.pre_interest;
-		ptr["open"] = (void*)&_data.open;
-		ptr["high"] = (void*)&_data.high;
-		ptr["low"] = (void*)&_data.low;
-		ptr["close"] = (void*)&_data.close;
-		ptr["settlement"] = (void*)&_data.settlement;
-		ptr["volume"] = (void*)&_data.volume;
-		ptr["amt"] = (void*)&_data.amt;
-		ptr["interest"] = (void*)&_data.interest;
-		ptr["state"] = (void*)&_data.state;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-
-private:
-	map<string, void*>	ptr;
-	dailyclear			_data;
-};
-
-class Market
+	ptr["currency_id"] = (void*)&_data.currency_id;
+	ptr["brief_code"] = (void*)&_data.brief_code;
+	ptr["chinese_name"] = (void*)&_data.chinese_name;
+	ptr["english_name"] = (void*)&_data.english_name;
+}
+template<>
+inline void LocalData<dailyclear>::Init()
 {
-public:
-	Market() = default;
-
-	Market(market& data)
-	{
-		_data = data;
-	}
-
-	Market(Market& data)
-	{
-		_data = data._data;
-	}
-
-	~Market()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Market& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetUInt("marketid") << "\t" << GetString("marketchname") << endl;
-	}
-
-	void Init()
-	{
-		ptr["market_id"] = (void*)&_data.market_id;
-		ptr["currency_id"] = (void*)&_data.currency_id;
-		ptr["time_zone"] = (void*)&_data.time_zone;
-		ptr["brief_code"] = (void*)&_data.brief_code;
-		ptr["trading_time"] = (void*)&_data.trading_time;
-		ptr["chinese_name"] = (void*)&_data.chinese_name;
-		ptr["english_name"] = (void*)&_data.english_name;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-private:
-	map<string, void*>	ptr;
-	market			_data;
-};
-
-class Secumaster
+	ptr["ukey"] = (void*)&_data.ukey;
+	ptr["marke_code"] = (void*)&_data.marke_code;
+	ptr["trading_day"] = (void*)&_data.trading_day;
+	ptr["upper_limit"] = (void*)&_data.upper_limit;
+	ptr["lower_limit"] = (void*)&_data.lower_limit;
+	ptr["pre_settlement"] = (void*)&_data.pre_settlement;
+	ptr["pre_close"] = (void*)&_data.pre_close;
+	ptr["pre_interest"] = (void*)&_data.pre_interest;
+	ptr["open"] = (void*)&_data.open;
+	ptr["high"] = (void*)&_data.high;
+	ptr["low"] = (void*)&_data.low;
+	ptr["close"] = (void*)&_data.close;
+	ptr["settlement"] = (void*)&_data.settlement;
+	ptr["volume"] = (void*)&_data.volume;
+	ptr["amt"] = (void*)&_data.amt;
+	ptr["interest"] = (void*)&_data.interest;
+	ptr["state"] = (void*)&_data.state;
+}
+template<>
+inline void LocalData<market>::Init()
 {
-public:
-	Secumaster() = default;
-
-	Secumaster(secumaster& data)
-	{
-		_data = data;
-	}
-
-	Secumaster(Secumaster& data)
-	{
-		_data = data._data;
-	}
-
-	~Secumaster()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Secumaster& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetUInt("ukcode") << "\t" << GetInt("marketid") << "\t" << GetString("chname") << endl;
-	}
-
-	void Init()
-	{
-		ptr["ukey"] = (void*)&_data.ukey;
-		ptr["market_id"] = (void*)&_data.market_id;
-		ptr["major_type"] = (void*)&_data.major_type;
-		ptr["minor_type"] = (void*)&_data.minor_type;
-		ptr["market_code"] = (void*)&_data.market_code;
-		ptr["market_abbr"] = (void*)&_data.market_abbr;
-		ptr["chinese_name"] = (void*)&_data.chinese_name;
-		ptr["english_name"] = (void*)&_data.english_name;
-		ptr["list_date"] = (void*)&_data.list_date;
-		ptr["delist_date"] = (void*)&_data.delist_date;
-		ptr["currency_id"] = (void*)&_data.currency_id;
-		ptr["jy_code"] = (void*)&_data.jy_code;
-		ptr["wind_code"] = (void*)&_data.wind_code;
-		ptr["input_code"] = (void*)&_data.input_code;
-		ptr["trading_time"] = (void*)&_data.trading_time;
-		ptr["trading_day"] = (void*)&_data.trading_day;
-		ptr["pre_trading_day"] = (void*)&_data.pre_trading_day;;
-		ptr["upper_limit"] = (void*)&_data.upper_limit;
-		ptr["lower_limit"] = (void*)&_data.lower_limit;
-		ptr["pre_close"] = (void*)&_data.pre_close;
-		ptr["pre_settlement"] = (void*)&_data.pre_settlement;
-		ptr["pre_interest"] = (void*)&_data.pre_interest;
-		ptr["pre_volume"] = (void*)&_data.pre_volume;
-		ptr["total_share"] = (void*)&_data.total_share;
-		ptr["float_share"] = (void*)&_data.float_share;
-		ptr["associate_code"] = (void*)&_data.associate_code;
-		ptr["exercise_price"] = (void*)&_data.exercise_price;
-		ptr["contract_id"] = (void*)&_data.contract_id;
-		ptr["min_order_size"] = (void*)&_data.min_order_size;
-		ptr["max_order_size"] = (void*)&_data.max_order_size;
-		ptr["lot_size"] = (void*)&_data.lot_size;
-		ptr["multiplier"] = (void*)&_data.multiplier;
-		ptr["tick_size"] = (void*)&_data.tick_size;
-		ptr["last_delivery_date"] = (void*)&_data.last_delivery_date;
-		ptr["min_trading_margin"] = (void*)&_data.min_trading_margin;
-		ptr["share_arrive"] = (void*)&_data.share_arrive;
-		ptr["money_arrive"] = (void*)&_data.money_arrive;
-		ptr["share_avail"] = (void*)&_data.share_avail;
-		ptr["money_avail"] = (void*)&_data.money_avail;
-		ptr["state"] = (void*)&_data.state;
-		ptr["board"] = (void*)&_data.board;
-		ptr["last_update"] = (void*)&_data.last_update;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-private:
-	map<string, void*>	ptr;
-	secumaster			_data;
-};
-
-class Tssyscalender
+	ptr["market_id"] = (void*)&_data.market_id;
+	ptr["currency_id"] = (void*)&_data.currency_id;
+	ptr["time_zone"] = (void*)&_data.time_zone;
+	ptr["brief_code"] = (void*)&_data.brief_code;
+	ptr["trading_time"] = (void*)&_data.trading_time;
+	ptr["chinese_name"] = (void*)&_data.chinese_name;
+	ptr["english_name"] = (void*)&_data.english_name;
+}
+template<>
+inline void LocalData<secumaster>::Init()
 {
-public:
-	Tssyscalender() = default;
-
-	Tssyscalender(tssyscalender& data)
-	{
-		_data = data;
-	}
-
-	Tssyscalender(Tssyscalender& data)
-	{
-		_data = data._data;
-	}
-
-	~Tssyscalender()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Tssyscalender& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetString("trday") << "\t" << GetString("holiday") << "\t" << GetString("comm") << "\t"
-			<< GetInt("weekno") << "\t" << GetUInt("dayofweek") << "\t" << GetString("daystat") << endl;
-	}
-
-	void Init()
-	{
-		ptr["trday"] = (void*)&_data.trday;
-		ptr["holiday"] = (void*)&_data.holiday;//需要处理
-		ptr["comm"] = (void*)&_data.comm;
-		ptr["weekno"] = (void*)&_data.weekno;
-		ptr["dayofweek"] = (void*)&_data.dayofweek;
-		ptr["daystat"] = (void*)&_data.daystat;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-private:
-	map<string, void*>		ptr;
-	tssyscalender			_data;
-};
-
-class Ukey
+	ptr["ukey"] = (void*)&_data.ukey;
+	ptr["market_id"] = (void*)&_data.market_id;
+	ptr["major_type"] = (void*)&_data.major_type;
+	ptr["minor_type"] = (void*)&_data.minor_type;
+	ptr["market_code"] = (void*)&_data.market_code;
+	ptr["market_abbr"] = (void*)&_data.market_abbr;
+	ptr["chinese_name"] = (void*)&_data.chinese_name;
+	ptr["english_name"] = (void*)&_data.english_name;
+	ptr["list_date"] = (void*)&_data.list_date;
+	ptr["delist_date"] = (void*)&_data.delist_date;
+	ptr["currency_id"] = (void*)&_data.currency_id;
+	ptr["jy_code"] = (void*)&_data.jy_code;
+	ptr["wind_code"] = (void*)&_data.wind_code;
+	ptr["input_code"] = (void*)&_data.input_code;
+	ptr["trading_time"] = (void*)&_data.trading_time;
+	ptr["trading_day"] = (void*)&_data.trading_day;
+	ptr["pre_trading_day"] = (void*)&_data.pre_trading_day;;
+	ptr["upper_limit"] = (void*)&_data.upper_limit;
+	ptr["lower_limit"] = (void*)&_data.lower_limit;
+	ptr["pre_close"] = (void*)&_data.pre_close;
+	ptr["pre_settlement"] = (void*)&_data.pre_settlement;
+	ptr["pre_interest"] = (void*)&_data.pre_interest;
+	ptr["pre_volume"] = (void*)&_data.pre_volume;
+	ptr["total_share"] = (void*)&_data.total_share;
+	ptr["float_share"] = (void*)&_data.float_share;
+	ptr["associate_code"] = (void*)&_data.associate_code;
+	ptr["exercise_price"] = (void*)&_data.exercise_price;
+	ptr["contract_id"] = (void*)&_data.contract_id;
+	ptr["min_order_size"] = (void*)&_data.min_order_size;
+	ptr["max_order_size"] = (void*)&_data.max_order_size;
+	ptr["lot_size"] = (void*)&_data.lot_size;
+	ptr["multiplier"] = (void*)&_data.multiplier;
+	ptr["tick_size"] = (void*)&_data.tick_size;
+	ptr["last_delivery_date"] = (void*)&_data.last_delivery_date;
+	ptr["min_trading_margin"] = (void*)&_data.min_trading_margin;
+	ptr["share_arrive"] = (void*)&_data.share_arrive;
+	ptr["money_arrive"] = (void*)&_data.money_arrive;
+	ptr["share_avail"] = (void*)&_data.share_avail;
+	ptr["money_avail"] = (void*)&_data.money_avail;
+	ptr["state"] = (void*)&_data.state;
+	ptr["board"] = (void*)&_data.board;
+	ptr["last_update"] = (void*)&_data.last_update;
+}
+template<>
+inline void LocalData<tssyscalender>::Init()
 {
-public:
-	Ukey() = default;
-
-	Ukey(ukey& data)
-	{
-		_data = data;
-	}
-
-	Ukey(Ukey& data)
-	{
-		_data = data._data;
-	}
-
-	~Ukey()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Ukey& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetUInt("ukcode") << "\t" << GetInt("ukext") << "\t" << GetString("marketcode") << endl;
-	}
-
-	void Init()
-	{
-		ptr["ukey"] = (void*)&_data._ukey;
-		ptr["market_id"] = (void*)&_data.market_id;
-		ptr["major_type"] = (void*)&_data.major_type;
-		ptr["minor_type"] = (void*)&_data.minor_type;
-		ptr["market_code"] = (void*)&_data.market_code;
-		ptr["market_abbr"] = (void*)&_data.market_abbr;
-		ptr["chinese_name"] = (void*)&_data.chinese_name;
-
-		ptr["english_name"] = (void*)&_data.english_name;
-		ptr["list_date"] = (void*)&_data.list_date;
-		ptr["delist_date"] = (void*)&_data.delist_date;
-		ptr["currency_id"] = (void*)&_data.currency_id;
-		ptr["jy_code"] = (void*)&_data.jy_code;
-		ptr["wind_code"] = (void*)&_data.wind_code;
-		ptr["input_code"] = (void*)&_data.input_code;
-		ptr["last_update"] = (void*)&_data.last_update;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-private:
-	map<string, void*>		ptr;
-	ukey					_data;
-};
-
-class Uktype
+	ptr["trday"] = (void*)&_data.trday;
+	ptr["holiday"] = (void*)&_data.holiday;//需要处理
+	ptr["comm"] = (void*)&_data.comm;
+	ptr["weekno"] = (void*)&_data.weekno;
+	ptr["dayofweek"] = (void*)&_data.dayofweek;
+	ptr["daystat"] = (void*)&_data.daystat;
+}
+template<>
+inline void LocalData<ukey>::Init()
 {
-public:
-	Uktype() = default;
+	ptr["ukey"] = (void*)&_data._ukey;
+	ptr["market_id"] = (void*)&_data.market_id;
+	ptr["major_type"] = (void*)&_data.major_type;
+	ptr["minor_type"] = (void*)&_data.minor_type;
+	ptr["market_code"] = (void*)&_data.market_code;
+	ptr["market_abbr"] = (void*)&_data.market_abbr;
+	ptr["chinese_name"] = (void*)&_data.chinese_name;
 
-	Uktype(uktype& data)
-	{
-		_data = data;
-	}
-
-	Uktype(Uktype& data)
-	{
-		_data = data._data;
-	}
-
-	~Uktype()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Uktype& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetUInt("majortype") << "\t" << GetInt("minortype") << "\t" << GetString("typechname") << endl;
-	}
-
-	void Init()
-	{
-		ptr["major_type"] = (void*)&_data.major_type;
-		ptr["minor_type"] = (void*)&_data.minor_type;
-		ptr["chinese_name"] = (void*)&_data.chinese_name;
-		ptr["english_name"] = (void*)&_data.english_name;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-private:
-	map<string, void*>		ptr;
-	uktype					_data;
-};
-
-class Calendar
+	ptr["english_name"] = (void*)&_data.english_name;
+	ptr["list_date"] = (void*)&_data.list_date;
+	ptr["delist_date"] = (void*)&_data.delist_date;
+	ptr["currency_id"] = (void*)&_data.currency_id;
+	ptr["jy_code"] = (void*)&_data.jy_code;
+	ptr["wind_code"] = (void*)&_data.wind_code;
+	ptr["input_code"] = (void*)&_data.input_code;
+	ptr["last_update"] = (void*)&_data.last_update;
+}
+template<>
+inline void LocalData<uktype>::Init()
 {
-public:
-	Calendar() = default;
-
-	Calendar(calendar& data)
-	{
-		_data = data;
-	}
-
-	Calendar(Calendar& data)
-	{
-		_data = data._data;
-	}
-
-	~Calendar()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Calendar& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetUInt("market_id") << "\t" << GetInt("daystat") << "\t" << GetString("comm") << endl;
-	}
-
-	void Init()
-	{
-		ptr["market_id"] = (void*)&_data.market_id;
-		ptr["date"] = (void*)&_data.date;
-		ptr["holiday"] = (void*)&_data.holiday;
-		ptr["weeknum"] = (void*)&_data.weeknum;
-		ptr["comm"] = (void*)&_data.comm;
-		ptr["daystat"] = (void*)&_data.daystat;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-private:
-	map<string, void*>			ptr;
-	calendar					_data;
-};
-
-class Component
+	ptr["major_type"] = (void*)&_data.major_type;
+	ptr["minor_type"] = (void*)&_data.minor_type;
+	ptr["chinese_name"] = (void*)&_data.chinese_name;
+	ptr["english_name"] = (void*)&_data.english_name;
+}
+template<>
+inline void LocalData<calendar>::Init()
 {
-public:
-	Component() = default;
-
-	Component(component& data)
-	{
-		_data = data;
-	}
-
-	Component(Component& data)
-	{
-		_data = data._data;
-	}
-
-	~Component()
-	{
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void operator=(Component& data)
-	{
-		_data = data._data;
-		if (!ptr.empty())
-		{
-			ptr.clear();
-		}
-	}
-
-	void show()
-	{
-		cout << GetUInt("update_date") << "\t" << GetDouble("component_id") << "\t" << GetDouble("ukey") << endl;
-	}
-
-	void Init()
-	{
-		ptr["component_id"] = (void*)&_data.component_id;
-		ptr["update_date"] = (void*)&_data.update_date;
-		ptr["ukey"] = (void*)&_data.ukey;
-		ptr["stock_amount"] = (void*)&_data.stock_amount;
-		ptr["cash_substitute_sign"] = (void*)&_data.cash_substitute_sign;
-		ptr["cash_substitute_proportion"] = (void*)&_data.cash_substitute_proportion;
-		ptr["fixed_substitute_money"] = (void*)&_data.fixed_substitute_money;
-	}
-	double GetDouble(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(double*)(it->second);
-		}
-		return -1.0;
-	}
-	int GetInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int*)(it->second);
-		}
-		return -1;
-	}
-	unsigned int GetUInt(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(unsigned int*)(it->second);
-		}
-		return -1;
-	}
-	string GetString(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return string((char*)(it->second));
-		}
-		return string("");
-	}
-	int64_t GetInt64_t(string lable)
-	{
-		auto it = ptr.find(lable);
-		if (it != ptr.end())
-		{
-			return *(int64_t*)(it->second);
-		}
-		return -1;
-	}
-private:
-	map<string, void*>			ptr;
-	component					_data;
-};
-
+	ptr["market_id"] = (void*)&_data.market_id;
+	ptr["date"] = (void*)&_data.date;
+	ptr["holiday"] = (void*)&_data.holiday;
+	ptr["weeknum"] = (void*)&_data.weeknum;
+	ptr["comm"] = (void*)&_data.comm;
+	ptr["daystat"] = (void*)&_data.daystat;
+}
+template<>
+inline void LocalData<component>::Init()
+{
+	ptr["component_id"] = (void*)&_data.component_id;
+	ptr["update_date"] = (void*)&_data.update_date;
+	ptr["ukey"] = (void*)&_data.ukey;
+	ptr["stock_amount"] = (void*)&_data.stock_amount;
+	ptr["cash_substitute_sign"] = (void*)&_data.cash_substitute_sign;
+	ptr["cash_substitute_proportion"] = (void*)&_data.cash_substitute_proportion;
+	ptr["fixed_substitute_money"] = (void*)&_data.fixed_substitute_money;
+}
 struct GetTrday
 {
 public:
@@ -1379,3 +597,4 @@ private:
 };
 
 #endif // !__BASEFILE_H__
+

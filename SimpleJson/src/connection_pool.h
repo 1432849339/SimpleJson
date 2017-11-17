@@ -29,6 +29,7 @@ public:
 	Connection*GetConnection();				   //获得数据库连接
 	void ReleaseConnection(Connection *conn);  //将数据库连接放回到连接池的容器中
 	static ConnPool *GetInstance(std::string _url, std::string _user, std::string password, int conn_count);			   //获取数据库连接池对象
+	void UpdateConnectPool();
 };
 
 #endif

@@ -7,6 +7,8 @@
 class contract_local_sql
 {
 public:
+	typedef LocalData<contract> Contract;
+public:
 	contract_local_sql();
 	~contract_local_sql();
 	bool is_empty();
@@ -20,6 +22,8 @@ private:
 class currency_local_sql 
 {
 public:
+	typedef LocalData<currency> Currency;
+public:
 	currency_local_sql();
 	~currency_local_sql();
 	bool is_empty();
@@ -32,6 +36,8 @@ private:
 
 class dailyclear_local_sql 
 {
+public:
+	typedef LocalData<dailyclear> Dailyclear;
 public:
 	dailyclear_local_sql();
 	~dailyclear_local_sql();
@@ -48,6 +54,8 @@ private:
 class Market_local_sql 
 {
 public:
+	typedef LocalData<market> Market;
+public:
 	Market_local_sql();
 	~Market_local_sql();
 	bool is_empty();
@@ -60,6 +68,8 @@ private:
 
 class secumatre_local_sql 
 {
+public:
+	typedef LocalData<secumaster> Secumaster;
 public:
 	secumatre_local_sql();
 	~secumatre_local_sql();
@@ -76,6 +86,8 @@ private:
 class tssyscalender_local_sql 
 {
 public:
+	typedef LocalData<tssyscalender> Tssyscalender;
+public:
 	tssyscalender_local_sql();
 	~tssyscalender_local_sql();
 	bool is_empty();
@@ -88,6 +100,8 @@ private:
 
 class ukey_local_sql
 {
+public:
+	typedef LocalData<ukey> Ukey;
 public:
 	ukey_local_sql();
 	~ukey_local_sql();
@@ -102,6 +116,8 @@ private:
 class uktype_local_sql
 {
 public:
+	typedef LocalData<uktype> Uktype;
+public:
 	uktype_local_sql();
 	~uktype_local_sql();
 	bool is_empty();
@@ -115,6 +131,8 @@ private:
 class calendar_local_sql
 {
 public:
+	typedef LocalData<calendar> Calendar;
+public:
 	calendar_local_sql();
 	~calendar_local_sql();
 	bool is_empty();
@@ -127,6 +145,8 @@ private:
 
 class component_local_sql 
 {
+public:
+	typedef LocalData<component> Component;
 public:
 	component_local_sql();
 	~component_local_sql();

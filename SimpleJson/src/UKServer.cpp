@@ -21,7 +21,7 @@ int UKService::OnEvent(Event & e)
 	if (e.type() == kMessage)
 	{
 		string smess = e.message();
-		LOG(WARNING) << smess << endl;
+		LOG(INFO) << smess << endl;
 		Query   query(smess);
 		query.Parse();
 		auto result = query.make_choice_queuy();
@@ -129,7 +129,7 @@ bool Query::Parse()
 //通过数据库查询
 bool Query::query_by_sql()
 {
-	LOG(WARNING) << "query_by_sql";
+	LOG(INFO) << "query_by_sql";
 	char Sql[10240]{ 0 };
 	TgwHead& tgw_head = jsonstream.GetTgwHead();
 	ReqHead& req_head = jsonstream.GetReqHead();
@@ -163,7 +163,11 @@ bool Query::query_by_sql()
 		}
 		break;
 	case 3://dailyclear
-		if (req_head.SecurityID == 0)
+		error_str.emplace_back("暂时不支持此表的查询");
+		LOG(ERROR) << "暂时不支持此表的查询";
+		err_num = -10;
+		return false;
+		/*if (req_head.SecurityID == 0)
 		{
 			if (req_head.Date == 0)
 			{
@@ -184,7 +188,7 @@ bool Query::query_by_sql()
 			{
 				sprintf(Sql, "SELECT * FROM %s a WHERE a.trading_day=%d AND a.ukey=%ld;", map_code_name[req_head.TableType].c_str(), req_head.Date, req_head.SecurityID);
 			}
-		}
+		}*/
 		break;
 	case 4://market
 		if (req_head.MarketID != 0)
@@ -249,14 +253,18 @@ bool Query::query_by_sql()
 		}
 		break;
 	case 6://tssyscalender
-		if (req_head.Date == 0)
+		error_str.emplace_back("暂时不支持此表的查询");
+		LOG(ERROR) << "暂时不支持此表的查询";
+		err_num = -10;
+		return false;
+		/*if (req_head.Date == 0)
 		{
 			sprintf(Sql, "SELECT * FROM %s ORDER BY trday DESC LIMIT 1;",map_code_name[req_head.TableType].c_str());
 		}
 		else
 		{
 			sprintf(Sql, "SELECT * FROM %s a WHERE a.trday='%d';", map_code_name[req_head.TableType].c_str(), req_head.Date);
-		}
+		}*/
 		break;
 	case 7://ukey
 		if (req_head.MarketID != 0)
@@ -286,33 +294,41 @@ bool Query::query_by_sql()
 		sprintf(Sql, "SELECT * FROM %s;",map_code_name[req_head.TableType].c_str());
 		break;
 	case 9://calendar  对时间铭感,需要处理
-		if (req_head.MarketID != 0)
-		{
-			if (req_head.Date == 0)
-			{
-				sprintf(Sql, "SELECT * FROM %s a WHERE a.market_id=%d ORDER BY `date` DESC LIMIT 1;", map_code_name[req_head.TableType].c_str(), req_head.MarketID);
-			}
-			else
-			{
-				sprintf(Sql, "SELECT * FROM %s a WHERE a.market_id=%d AND `date`='%d';",map_code_name[req_head.TableType].c_str(), req_head.MarketID, req_head.Date);
-			}
-		}
-		else
-		{
-			if (req_head.Date == 0)
-			{
-				
-				sprintf(Sql, "SELECT * FROM %s a INNER JOIN(SELECT `market_id`,MAX(`date`)AS `date` FROM %s GROUP  BY `market_id`)b ON a.market_id = b.market_id AND a.`date`=b.date;; ", map_code_name[req_head.TableType].c_str(), map_code_name[req_head.TableType].c_str());
-				//sprintf(Sql, "SELECT * FROM %s ORDER BY `date` DESC LIMIT 1;",map_code_name[req_head.TableType].c_str());
-			}
-			else
-			{
-				sprintf(Sql, "SELECT * FROM %s a WHERE  `date`='%d';",map_code_name[req_head.TableType].c_str(), req_head.Date);
-			}
-		}
+		error_str.emplace_back("暂时不支持此表的查询");
+		LOG(ERROR) << "暂时不支持此表的查询";
+		err_num = -10;
+		return false;
+		//if (req_head.MarketID != 0)
+		//{
+		//	if (req_head.Date == 0)
+		//	{
+		//		sprintf(Sql, "SELECT * FROM %s a WHERE a.market_id=%d ORDER BY `date` DESC LIMIT 1;", map_code_name[req_head.TableType].c_str(), req_head.MarketID);
+		//	}
+		//	else
+		//	{
+		//		sprintf(Sql, "SELECT * FROM %s a WHERE a.market_id=%d AND `date`='%d';",map_code_name[req_head.TableType].c_str(), req_head.MarketID, req_head.Date);
+		//	}
+		//}
+		//else
+		//{
+		//	if (req_head.Date == 0)
+		//	{
+		//		
+		//		sprintf(Sql, "SELECT * FROM %s a INNER JOIN(SELECT `market_id`,MAX(`date`)AS `date` FROM %s GROUP  BY `market_id`)b ON a.market_id = b.market_id AND a.`date`=b.date;; ", map_code_name[req_head.TableType].c_str(), map_code_name[req_head.TableType].c_str());
+		//		//sprintf(Sql, "SELECT * FROM %s ORDER BY `date` DESC LIMIT 1;",map_code_name[req_head.TableType].c_str());
+		//	}
+		//	else
+		//	{
+		//		sprintf(Sql, "SELECT * FROM %s a WHERE  `date`='%d';",map_code_name[req_head.TableType].c_str(), req_head.Date);
+		//	}
+		//}
 		break;
 	case 10://component 对时间铭感,需要处理
-		if (req_head.SecurityID == 0)
+		error_str.emplace_back("暂时不支持此表的查询");
+		LOG(ERROR) << "暂时不支持此表的查询";
+		err_num = -10;
+		return false;
+		/*if (req_head.SecurityID == 0)
 		{
 			if (req_head.Date == 0)
 			{
@@ -333,12 +349,12 @@ bool Query::query_by_sql()
 			{
 				sprintf(Sql, "SELECT * FROM %s a WHERE a.update_date=%d AND a.ukey=%ld;",map_code_name[req_head.TableType].c_str(), req_head.Date, req_head.SecurityID);
 			}
-		}
+		}*/
 		break;
 	default:
 		break;
 	}
-	LOG(WARNING) << Sql;
+	LOG(INFO) << Sql;
 	rs = state->executeQuery(Sql);
 	LOG(INFO) << "Retrieved " << rs->rowsCount() << " row(s)." << std::endl;
 	int pCount = rs->rowsCount();
@@ -635,7 +651,7 @@ bool Query::query_by_sql()
 //通过内存数据查询
 bool Query::query_by_local()
 {
-	LOG(WARNING) << "query_by_local";
+	LOG(INFO) << "query_by_local";
 	TgwHead& tgw_head = jsonstream.GetTgwHead();
 	ReqHead& req_head = jsonstream.GetReqHead();
 	std::map<std::string, int32_t>& Parameter = jsonstream.GetParameter();
@@ -647,7 +663,7 @@ bool Query::query_by_local()
 	{
 	case 1:
 		[&]() {
-			vector<shared_ptr<Contract>>			result_1;
+			vector<shared_ptr<contract_local_sql::Contract>>			result_1;
 			shared_ptr<contract_local_sql> contract_local = local.contract_local;
 			contract_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_1);
 			package(&tgw_head, &req_head, result_1);
@@ -655,15 +671,19 @@ bool Query::query_by_local()
 		break;
 	case 2:
 		[&]() {
-			vector<shared_ptr<Currency>>			result_2;
+			vector<shared_ptr<currency_local_sql::Currency>>			result_2;
 			shared_ptr<currency_local_sql>	currency_local = local.currency_local;
 			currency_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_2);
 			package(&tgw_head, &req_head, result_2);
 		}();
 		break;
 	case 3:
+		error_str.emplace_back("暂时不支持此表的查询");
+		LOG(ERROR) << "暂时不支持此表的查询";
+		err_num = -10;
+		return false;
 		[&]() {
-			vector<shared_ptr<Dailyclear>>			result_3;
+			vector<shared_ptr<dailyclear_local_sql::Dailyclear>>			result_3;
 			shared_ptr<dailyclear_local_sql>	dailyclear_local = local.dailyclear_local;
 			dailyclear_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_3);
 			package(&tgw_head, &req_head, result_3);
@@ -671,7 +691,7 @@ bool Query::query_by_local()
 		break;
 	case 4:
 		[&]() {
-			vector<shared_ptr<Market>>				result_4;
+			vector<shared_ptr<Market_local_sql::Market>>				result_4;
 			shared_ptr<Market_local_sql> market_local = local.market_local;
 			market_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_4);
 			package(&tgw_head, &req_head, result_4);
@@ -679,23 +699,27 @@ bool Query::query_by_local()
 		break;
 	case 5:
 		[&]() {
-			vector<shared_ptr<Secumaster>>			result_5;
+			vector<shared_ptr<secumatre_local_sql::Secumaster>>			result_5;
 			shared_ptr<secumatre_local_sql> secumatre_local = local.secumatre_local;
 			secumatre_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_5);
 			package(&tgw_head, &req_head, result_5);
 		}();
 		break;
 	case 6:
+		error_str.emplace_back("暂时不支持此表的查询");
+		LOG(ERROR) << "暂时不支持此表的查询";
+		err_num = -10;
+		return false;
 		[&]() {
-			vector<shared_ptr<Tssyscalender>>		result_6;
+			vector<shared_ptr<tssyscalender_local_sql::Tssyscalender>>		result_6;
 			shared_ptr<tssyscalender_local_sql> tssyscalender_local = local.tssyscalender_local;
-			tssyscalender_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_6);
+			//tssyscalender_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_6);
 			package(&tgw_head, &req_head, result_6);
 		}();
 		break;
 	case 7:
 		[&]() {
-			vector<shared_ptr<Ukey>>				result_7;
+			vector<shared_ptr<ukey_local_sql::Ukey>>				result_7;
 			shared_ptr<ukey_local_sql> ukey_local = local.ukey_local;
 			ukey_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_7);
 			package(&tgw_head, &req_head, result_7);
@@ -703,25 +727,33 @@ bool Query::query_by_local()
 		break;
 	case 8:
 		[&]() {
-			vector<shared_ptr<Uktype>>				result_8;
+			vector<shared_ptr<uktype_local_sql::Uktype>>				result_8;
 			shared_ptr<uktype_local_sql> uktype_local = local.uktype_local;
 			uktype_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_8);
 			package(&tgw_head, &req_head, result_8);
 		}();
 		break;
 	case 9:
+		error_str.emplace_back("暂时不支持此表的查询");
+		LOG(ERROR) << "暂时不支持此表的查询";
+		err_num = -10;
+		return false;
 		[&]() {
-			vector<shared_ptr<Calendar>>			result_9;
+			vector<shared_ptr<calendar_local_sql::Calendar>>			result_9;
 			shared_ptr<calendar_local_sql> calendar_local = local.calendar_local;
-			calendar_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_9);
+			//calendar_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_9);
 			package(&tgw_head, &req_head, result_9);
 		}();
 		break;
 	case 10:
+		error_str.emplace_back("暂时不支持此表的查询");
+		LOG(ERROR) << "暂时不支持此表的查询";
+		err_num = -10;
+		return false;
 		[&]() {
-			vector<shared_ptr<Component>>			result_10;
+			vector < shared_ptr < component_local_sql::Component >> result_10;
 			shared_ptr<component_local_sql> component_local = local.component_local;
-			component_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_10);
+			//component_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_10);
 			package(&tgw_head, &req_head, result_10);
 		}();
 		break;
@@ -809,14 +841,14 @@ void Update_local_data()
 			vector<thread>  thread_update;
 			thread_update.emplace_back([&]() {local.contract_local.reset(new contract_local_sql); });
 			thread_update.emplace_back([&]() {local.currency_local.reset(new currency_local_sql); });
-			thread_update.emplace_back([&]() {local.dailyclear_local.reset(new dailyclear_local_sql); });
+			//thread_update.emplace_back([&]() {local.dailyclear_local.reset(new dailyclear_local_sql); });
 			thread_update.emplace_back([&]() {local.market_local.reset(new Market_local_sql); });
 			thread_update.emplace_back([&]() {local.secumatre_local.reset(new secumatre_local_sql); });
-			thread_update.emplace_back([&]() {local.tssyscalender_local.reset(new tssyscalender_local_sql); });
+			//thread_update.emplace_back([&]() {local.tssyscalender_local.reset(new tssyscalender_local_sql); });
 			thread_update.emplace_back([&]() {local.ukey_local.reset(new ukey_local_sql); });
 			thread_update.emplace_back([&]() {local.uktype_local.reset(new uktype_local_sql); });
-			thread_update.emplace_back([&]() {local.calendar_local.reset(new calendar_local_sql); });
-			thread_update.emplace_back([&]() {local.component_local.reset(new component_local_sql); });
+			//thread_update.emplace_back([&]() {local.calendar_local.reset(new calendar_local_sql); });
+			//thread_update.emplace_back([&]() {local.component_local.reset(new component_local_sql); });
 			for (auto &th : thread_update)
 			{
 				th.join();

@@ -107,28 +107,34 @@ Connection * ConnPool::GetConnection()
 		con = connList.front(); //得到第一个连接
 		connList.pop_front();   //移除第一个连接
 		--curSize;
+		LOG(WARNING) << "##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
 		while (con == nullptr || con->isClosed())
 		{
 			con = this->CreateConnection();
 			if (con == nullptr || con->isClosed())
 			{
+				sleep(1);
 				LOG(WARNING) << "获取连接中...";
 			}
 		}
+		LOG(WARNING) << "##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
 		lock.unlock();
 		return con;
 	}
 	else 
 	{
+		LOG(WARNING) << "##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
 		con = this->CreateConnection();
 		while (con == nullptr || con->isClosed())
 		{
 			con = this->CreateConnection();
 			if (con == nullptr || con->isClosed())
 			{
+				sleep(1);
 				LOG(WARNING) << "获取连接中...";
 			}
 		}
+		LOG(WARNING) << "##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
 		lock.unlock();	
 		return con;
 	}
@@ -163,4 +169,38 @@ ConnPool * ConnPool::GetInstance(std::string _url,std::string _user,std::string 
 	}
 	LOG(INFO) << "创建了"<<conn_count<<"个连接!!!";
 	return connPool;
+}
+
+void ConnPool::UpdateConnectPool()
+{
+	using std::chrono::system_clock;
+	while (true)
+	{
+		std::time_t tt = system_clock::to_time_t(system_clock::now());
+		struct std::tm * ptm = std::localtime(&tt);
+		LOG(WARNING) << "数据库连接池启动@@@@...";
+		LOG(WARNING) << "等待3小时,跳动@@@@...";
+		ptm->tm_hour += 3;
+		//ptm->tm_sec += 3;
+		std::this_thread::sleep_until(system_clock::from_time_t(mktime(ptm)));
+
+		lock.lock();
+		this->DestoryConnPool();
+		Connection*		conn;
+		for (auto i = 0; i < this->maxSize; ++i)
+		{
+			conn = this->CreateConnection();
+			if (conn)
+			{
+				this->connList.push_back(conn);
+				++(this->curSize);
+			}
+			else
+			{
+				LOG(ERROR) << "创建CONNECTION出错";
+			}
+		}
+		lock.unlock();
+		LOG(WARNING) << "数据库连接池刷新@@@当前时间...";
+	}
 }

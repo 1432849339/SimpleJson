@@ -62,7 +62,7 @@ public:
 		}
 		if (!m_document.HasMember("tgw"))//后端请求:直连
 		{
-			LOG(WARNING) << "后端直连";
+			LOG(INFO) << "后端直连";
 			return JsonException(0, "后端直连");
 		}
 		else
@@ -114,8 +114,6 @@ public:
 	}
 	virtual JsonException ParaseReqHead()
 	{
-		//m_document.Clear();
-		//m_document.Parse<0>(m_messege.c_str());
 		if (m_document.HasParseError())
 		{
 			LOG(ERROR) << m_document.GetParseError();
@@ -172,7 +170,7 @@ public:
 				return JsonException(-7, "没有字段: Field");
 			}
 			m_reqhead.Seqno = req_head["Seqno"].GetInt();
-			m_reqhead.SecurityID = req_head["SecurityID"].GetInt64();
+			m_reqhead.SecurityID = req_head["SecurityID"].GetInt64(); 
 			m_reqhead.TableType = req_head["TableType"].GetInt();
 			m_reqhead.MarketID = req_head["MarketID"].GetInt();
 			m_reqhead.Date = req_head["Date"].GetInt();

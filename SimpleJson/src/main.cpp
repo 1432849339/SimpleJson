@@ -64,14 +64,16 @@ int main(int argc,char **argv)
 	ison::base::iblog_v(1002);
 	ison::base::iblog_stderrthreshold(1);
 	ison::base::iblog_logbufsecs(0);
-	LOG(WARNING) << "日期:" << GetDate() << std::endl;
-	connpool = ConnPool::GetInstance("172.24.54.1", "ukdb", "ukdb", 10);
-
-	thread t(Update_local_data);
+	LOG(WARNING) << "日期:" << GetDate();
+	connpool = ConnPool::GetInstance("172.24.54.1", "ukdb", "ukdb", 20);
+	thread thread_update_pool(&ConnPool::UpdateConnectPool, connpool);//每一定时间唤醒数据库连接;
+	thread thread_update_local(Update_local_data);//启动每天定时更新本地数据的线程;
 	const char* g_query_bind = NULL;//req-rep监听请求的端口
 	const char* g_query_con = NULL;//连接tgw的端口
-	g_query_bind = "tcp://*:9112";
-	g_query_con = "tcp://172.24.10.35:8888";
+	//g_query_bind = "tcp://*:9112";
+	//g_query_con = "tcp://172.24.10.35:8888";
+	g_query_bind = argv[1];
+	g_query_con = argv[2];
 	ison::base::Stage Service(ctx);
 	int ret = 0;
 	if (g_query_bind && g_query_con)
@@ -88,16 +90,20 @@ int main(int argc,char **argv)
 			LOG(ERROR) << "Service Connect Error!";
 			return -1;
 		}
-		//ison::base::ActorPtr query_service(new UKService(argv[3]));//actor name
-		ison::base::ActorPtr query_service(new UKService("GetUkeyTable"));
+		ison::base::ActorPtr query_service(new UKService(argv[3]));//actor name
+		//ison::base::ActorPtr query_service(new UKService("GetUkeyTable"));
 		Service.AddActor(query_service);
 		Service.Start();
 		LOG(WARNING) << "service Startting...";
 		Service.Join();		//connect to Service and join service queue
 	}
-	if (t.joinable())
+	if (thread_update_local.joinable())
 	{
-		t.join();
+		thread_update_local.join();
+	}
+	if (thread_update_pool.joinable())
+	{
+		thread_update_pool.join();
 	}
 	return 0;
 }
