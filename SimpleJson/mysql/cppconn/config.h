@@ -57,7 +57,6 @@
 #define HAVE_MS_INT64   1
 #define HAVE_MS_UINT64   1
 
-
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif

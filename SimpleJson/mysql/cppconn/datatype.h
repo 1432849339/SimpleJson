@@ -22,47 +22,43 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-
-
 #ifndef _SQL_DATATYPE_H_
 #define _SQL_DATATYPE_H_
 
 namespace sql
 {
-
-class DataType
-{
-	DataType();
-public:
-	enum {
-		UNKNOWN = 0,
-		BIT,
-		TINYINT,
-		SMALLINT,
-		MEDIUMINT,
-		INTEGER,
-		BIGINT,
-		REAL,
-		DOUBLE,
-		DECIMAL,
-		NUMERIC,
-		CHAR,
-		BINARY,
-		VARCHAR,
-		VARBINARY,
-		LONGVARCHAR,
-		LONGVARBINARY,
-		TIMESTAMP,
-		DATE,
-		TIME,
-		YEAR,
-		GEOMETRY,
-		ENUM,
-		SET,
-		SQLNULL
+	class DataType
+	{
+		DataType();
+	public:
+		enum {
+			UNKNOWN = 0,
+			BIT,
+			TINYINT,
+			SMALLINT,
+			MEDIUMINT,
+			INTEGER,
+			BIGINT,
+			REAL,
+			DOUBLE,
+			DECIMAL,
+			NUMERIC,
+			CHAR,
+			BINARY,
+			VARCHAR,
+			VARBINARY,
+			LONGVARCHAR,
+			LONGVARBINARY,
+			TIMESTAMP,
+			DATE,
+			TIME,
+			YEAR,
+			GEOMETRY,
+			ENUM,
+			SET,
+			SQLNULL
+		};
 	};
-};
-
 } /* namespace */
 
 #endif /* _SQL_DATATYPE_H_ */

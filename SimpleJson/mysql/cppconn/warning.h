@@ -22,11 +22,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-
-
 #ifndef _SQL_WARNING_H_
 #define _SQL_WARNING_H_
-
 
 #include <stdexcept>
 #include <string>
@@ -35,40 +32,36 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 namespace sql
 {
-
 #ifdef _WIN32
 #pragma warning (disable : 4290)
-//warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+	//warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
 #endif
 
-class SQLWarning
-{
-public:
+	class SQLWarning
+	{
+	public:
 
-	SQLWarning(){}
+		SQLWarning() {}
 
-	virtual const sql::SQLString & getMessage() const = 0;
+		virtual const sql::SQLString & getMessage() const = 0;
 
-	virtual const sql::SQLString & getSQLState() const = 0;
+		virtual const sql::SQLString & getSQLState() const = 0;
 
-	virtual int getErrorCode() const = 0;
+		virtual int getErrorCode() const = 0;
 
-	virtual const SQLWarning * getNextWarning() const = 0;
+		virtual const SQLWarning * getNextWarning() const = 0;
 
-	virtual void setNextWarning(const SQLWarning * _next) = 0;
+		virtual void setNextWarning(const SQLWarning * _next) = 0;
 
-protected:
+	protected:
 
-	virtual ~SQLWarning(){};
+		virtual ~SQLWarning() {};
 
-	SQLWarning(const SQLWarning& e){};
+		SQLWarning(const SQLWarning& e) {};
 
-private:
-	const SQLWarning & operator = (const SQLWarning & rhs);
-
-};
-
-
+	private:
+		const SQLWarning & operator = (const SQLWarning & rhs);
+	};
 } /* namespace sql */
 
 #endif /* _SQL_WARNING_H_ */

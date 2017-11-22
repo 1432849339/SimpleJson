@@ -41,7 +41,7 @@
 //     // that can't be accomplished e.g. via just VLOG(2) << ...;
 //   }
 //
-// The truth value that VLOG_IS_ON(level) returns is determined by 
+// The truth value that VLOG_IS_ON(level) returns is determined by
 // the three verbosity level flags:
 //   --v=<n>  Gives the default maximal active V-logging level;
 //            0 is the default.
@@ -102,7 +102,7 @@
 //       (If no --vmodule pattern applied to them
 //       the value of FLAGS_v will continue to control them.)
 extern GOOGLE_GLOG_DLL_DECL int SetVLOGLevel(const char* module_pattern,
-                                             int log_level);
+	int log_level);
 
 // Various declarations needed for VLOG_IS_ON above: =========================
 
@@ -121,9 +121,9 @@ extern google::int32 kLogSiteUninitialized;
 // We will return the return value for VLOG_IS_ON
 // and if possible set *site_flag appropriately.
 extern GOOGLE_GLOG_DLL_DECL bool InitVLOG3__(
-    google::int32** site_flag,
-    google::int32* site_default,
-    const char* fname,
-    google::int32 verbose_level);
+	google::int32** site_flag,
+	google::int32* site_default,
+	const char* fname,
+	google::int32 verbose_level);
 
 #endif  // BASE_VLOG_IS_ON_H_

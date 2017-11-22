@@ -63,10 +63,8 @@ template<class First, class Second>
 std::ostream& operator<<(std::ostream& out, const std::pair<First, Second>& p);
 
 namespace google {
-
-template<class Iter>
-void PrintSequence(std::ostream& out, Iter begin, Iter end);
-
+	template<class Iter>
+	void PrintSequence(std::ostream& out, Iter begin, Iter end);
 }
 
 #define OUTPUT_TWO_ARG_CONTAINER(Sequence) \
@@ -133,25 +131,23 @@ OUTPUT_FIVE_ARG_CONTAINER(__gnu_cxx::hash_multimap)
 
 template<class First, class Second>
 inline std::ostream& operator<<(std::ostream& out,
-                                const std::pair<First, Second>& p) {
-  out << '(' << p.first << ", " << p.second << ')';
-  return out;
+	const std::pair<First, Second>& p) {
+	out << '(' << p.first << ", " << p.second << ')';
+	return out;
 }
 
 namespace google {
-
-template<class Iter>
-inline void PrintSequence(std::ostream& out, Iter begin, Iter end) {
-  // Output at most 100 elements -- appropriate if used for logging.
-  for (int i = 0; begin != end && i < 100; ++i, ++begin) {
-    if (i > 0) out << ' ';
-    out << *begin;
-  }
-  if (begin != end) {
-    out << " ...";
-  }
-}
-
+	template<class Iter>
+	inline void PrintSequence(std::ostream& out, Iter begin, Iter end) {
+		// Output at most 100 elements -- appropriate if used for logging.
+		for (int i = 0; begin != end && i < 100; ++i, ++begin) {
+			if (i > 0) out << ' ';
+			out << *begin;
+		}
+		if (begin != end) {
+			out << " ...";
+		}
+	}
 }
 
 // Note that this is technically undefined behavior! We are adding things into

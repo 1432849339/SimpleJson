@@ -14,11 +14,11 @@ contract_local_sql::contract_local_sql()
 	// 从连接池中获取mysql连接
 	sprintf(Sql, "SELECT * FROM %s;", map_code_name[1].c_str());
 	con = connpool->GetConnection();
-	
+
 	state = con->createStatement();
-	
+
 	rs = state->executeQuery(Sql);
-	
+
 	while (rs->next())
 	{
 		contract* temp_data = new contract{ 0 };
@@ -101,11 +101,11 @@ currency_local_sql::currency_local_sql()
 	// 从连接池中获取mysql连接
 	sprintf(Sql, "SELECT * FROM %s;", map_code_name[2].c_str());
 	con = connpool->GetConnection();
-	
+
 	state = con->createStatement();
-	
+
 	rs = state->executeQuery(Sql);
-	
+
 	while (rs->next())
 	{
 		currency* temp_data = new currency{ 0 };
@@ -170,17 +170,16 @@ dailyclear_local_sql::dailyclear_local_sql()
 	char Sql[10240]{ 0 };
 	sprintf(Sql, "SELECT * FROM %s a INNER JOIN (SELECT ukey,MAX(`trading_day`) trading_day FROM %s  GROUP BY ukey) b ON a.`ukey`=b.`ukey` AND a.`trading_day`=b.`trading_day`;", map_code_name[3].c_str(), map_code_name[3].c_str());
 	auto TransToLocal = [&]() {
-		
 		Connection*			con = nullptr;
 		Statement*			state = nullptr;
 		sql::ResultSet*		rs = nullptr;
 		// 从连接池中获取mysql连接
 		con = connpool->GetConnection();
-		
+
 		state = con->createStatement();
-		
+
 		rs = state->executeQuery(Sql);
-		
+
 		while (rs->next())
 		{
 			dailyclear* temp_data = new dailyclear{ 0 };
@@ -290,12 +289,11 @@ Market_local_sql::Market_local_sql()
 	// 从连接池中获取mysql连接
 	sprintf(Sql, "SELECT * FROM %s;", map_code_name[4].c_str());
 	con = connpool->GetConnection();
-	
+
 	state = con->createStatement();
-	
+
 	rs = state->executeQuery(Sql);
-	
-	
+
 	while (rs->next())
 	{
 		market* temp_data = new market{ 0 };
@@ -363,17 +361,13 @@ secumatre_local_sql::secumatre_local_sql()
 	char Sql[10240]{ 0 };
 	sprintf(Sql, "SELECT * ,DATE_FORMAT(last_update,'%%Y%%m%%d%%H%%I%%S') AS lastupdate FROM %s a INNER JOIN (SELECT ukey,MAX(`trading_day`) trading_day FROM %s GROUP BY ukey) b ON a.`ukey`=b.`ukey` AND a.`trading_day`=b.`trading_day`;", map_code_name[5].c_str(), map_code_name[5].c_str());
 	auto TransToLocal = [&]() {
-		
 		Connection*			con = nullptr;
 		Statement*			state = nullptr;
 		sql::ResultSet*		rs = nullptr;
 		// 从连接池中获取mysql连接
 		con = connpool->GetConnection();
-		
 		state = con->createStatement();
-		
 		rs = state->executeQuery(Sql);
-		
 		while (rs->next())
 		{
 			secumaster* temp_secumaster = new secumaster{ 0 };
@@ -569,12 +563,11 @@ tssyscalender_local_sql::tssyscalender_local_sql()
 	char Sql[10240]{ 0 };
 	sprintf(Sql, "SELECT * FROM %s;", map_code_name[6].c_str());
 	con = connpool->GetConnection();
-	
+
 	state = con->createStatement();
-	
+
 	rs = state->executeQuery(Sql);
-	
-	
+
 	while (rs->next())
 	{
 		tssyscalender* temp_data = new tssyscalender;
@@ -640,11 +633,11 @@ ukey_local_sql::ukey_local_sql()
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
 	con = connpool->GetConnection();
-	
+
 	state = con->createStatement();
-	
+
 	rs = state->executeQuery(Sql);
-	
+
 	while (rs->next())
 	{
 		ukey* temp_data = new ukey{ 0 };
@@ -735,7 +728,7 @@ bool ukey_local_sql::find(int market_id, int64_t ukey, int date, vector<shared_p
 		}
 		else
 		{
-			for (auto &id:_index)
+			for (auto &id : _index)
 			{
 				for (auto &it : id.second)
 				{
@@ -758,11 +751,11 @@ uktype_local_sql::uktype_local_sql()
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
 	con = connpool->GetConnection();
-	
+
 	state = con->createStatement();
-	
+
 	rs = state->executeQuery(Sql);
-	
+
 	while (rs->next())
 	{
 		uktype* temp_data = new uktype{ 0 };
@@ -816,11 +809,11 @@ calendar_local_sql::calendar_local_sql()
 	sql::ResultSet*		rs = nullptr;
 	// 从连接池中获取mysql连接
 	con = connpool->GetConnection();
-	
+
 	state = con->createStatement();
-	
+
 	rs = state->executeQuery(Sql);
-	
+
 	while (rs->next())
 	{
 		calendar* temp_data = new calendar{ 0 };
@@ -882,7 +875,7 @@ bool calendar_local_sql::find(int market_id, int64_t ukey, int date, vector<shar
 	}
 	else
 	{
-		for (auto &id:_index)
+		for (auto &id : _index)
 		{
 			if (date == 0)
 			{
@@ -912,17 +905,16 @@ component_local_sql::component_local_sql()
 	char Sql[10240]{ 0 };
 	sprintf(Sql, "SELECT * FROM %s a INNER JOIN (SELECT ukey,MAX(`update_date`) update_date FROM %s  GROUP BY ukey) b ON a.`ukey`=b.`ukey` AND a.`update_date`=b.`update_date`;", map_code_name[10].c_str(), map_code_name[10].c_str());
 	auto TransToLocal = [&]() {
-		
 		Connection*			con = nullptr;
 		Statement*			state = nullptr;
 		sql::ResultSet*		rs = nullptr;
 		// 从连接池中获取mysql连接
 		con = connpool->GetConnection();
-		
+
 		state = con->createStatement();
-		
+
 		rs = state->executeQuery(Sql);
-		
+
 		while (rs->next())
 		{
 			component* temp_data = new component{ 0 };
@@ -930,9 +922,9 @@ component_local_sql::component_local_sql()
 			temp_data->update_date = rs->getInt("update_date");
 			temp_data->ukey = rs->getInt64("ukey");
 			temp_data->stock_amount = rs->getInt("stock_amount");
-			temp_data->cash_substitute_sign = rs->getInt("cash_substitute_sign");
-			temp_data->cash_substitute_proportion = rs->getDouble("cash_substitute_proportion");
-			temp_data->fixed_substitute_money = rs->getDouble("fixed_substitute_money");
+			temp_data->cash_substitute_sign = (double)rs->getInt("cash_substitute_sign");
+			temp_data->cash_substitute_proportion = (double)rs->getDouble("cash_substitute_proportion");
+			temp_data->fixed_substitute_money = (double)rs->getDouble("fixed_substitute_money");
 			local_data.emplace_back(temp_data);
 		}
 		rs->close();
@@ -943,7 +935,7 @@ component_local_sql::component_local_sql()
 	memset(Sql, '\0', 10240);
 	sprintf(Sql, "SELECT * FROM %s WHERE update_date>=%d AND update_date<=%d;", map_code_name[10].c_str(), date_start, date_end);
 	TransToLocal();
-	
+
 	for (auto &it : local_data)
 	{
 		shared_ptr<Component> p = make_shared<Component>(*it);
@@ -1005,6 +997,158 @@ bool component_local_sql::find(int market_id, int64_t ukey, int date, vector<sha
 				if (is_date != uk.second.end())
 				{
 					result.emplace_back(is_date->second);
+				}
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+etf_component_local_sql::etf_component_local_sql()
+{
+	GetTrday ttt;
+	int date_end = ttt();
+	int date_start = ttt - DATE_DISTANCE;
+	vector<etf_component*>  local_data;
+	char Sql[10240]{ 0 };
+	sprintf(Sql, "SELECT * FROM %s a INNER JOIN (SELECT ukey,MAX(`trading_day`) trading_day FROM %s  GROUP BY ukey) b ON a.`ukey`=b.`ukey` AND a.`trading_day`=b.`trading_day`;", map_code_name[11].c_str(), map_code_name[11].c_str());
+	auto TransToLocal = [&]() {
+		Connection*			con = nullptr;
+		Statement*			state = nullptr;
+		sql::ResultSet*		rs = nullptr;
+		// 从连接池中获取mysql连接
+		con = connpool->GetConnection();
+		state = con->createStatement();
+		rs = state->executeQuery(Sql);
+		while (rs->next())
+		{
+			etf_component* temp_data = new etf_component{ 0 };
+			temp_data->component_id = rs->getInt64("component_id");
+			STRNCPY(temp_data->component_one_code, rs->getString("component_one_code").c_str());
+			STRNCPY(temp_data->component_two_code, rs->getString("component_two_code").c_str());
+			STRNCPY(temp_data->online_creation_code, rs->getString("online_creation_code").c_str());
+			STRNCPY(temp_data->online_cash_code, rs->getString("online_cash_code").c_str());
+			STRNCPY(temp_data->creation_redemption_cash_code, rs->getString("creation_redemption_cash_code").c_str());
+			temp_data->creation_redemption_unit = rs->getDouble("creation_redemption_unit");
+			temp_data->estimate_cash_component = rs->getDouble("estimate_cash_component");
+			temp_data->max_cash_ratio = rs->getDouble("max_cash_ratio");
+			STRNCPY(temp_data->publish, rs->getString("publish").c_str());
+			STRNCPY(temp_data->creation, rs->getString("creation").c_str());
+			STRNCPY(temp_data->redemption, rs->getString("redemption").c_str());
+			temp_data->record_num = rs->getInt("record_num");
+			temp_data->total_record_num = rs->getInt("total_record_num");
+			temp_data->trading_day = rs->getInt("trading_day");
+			temp_data->pre_trading_day = rs->getInt("pre_trading_day");
+			temp_data->cash_component = rs->getDouble("cash_component");
+			temp_data->nav_per_cu = rs->getDouble("nav_per_cu");
+			temp_data->nav = rs->getDouble("nav");
+			temp_data->dividend_per_cu = rs->getDouble("dividend_per_cu");
+			temp_data->creation_limit = rs->getDouble("creation_limit");
+			temp_data->redemption_limit = rs->getDouble("redemption_limit");
+			temp_data->creation_limit_per_user = rs->getDouble("creation_limit_per_user");
+			temp_data->redemption_limit_per_user = rs->getDouble("redemption_limit_per_user");
+			temp_data->net_creation_limit = rs->getDouble("net_creation_limit");
+			temp_data->net_redemption_limit = rs->getDouble("net_redemption_limit");
+			temp_data->net_creation_limit_per_user = rs->getDouble("net_creation_limit_per_user");
+			temp_data->net_redemption_limit_per_user = rs->getDouble("net_redemption_limit_per_user");
+			temp_data->ukey = rs->getInt64("ukey");
+			STRNCPY(temp_data->market_code, rs->getString("market_code").c_str());
+			STRNCPY(temp_data->sub_stitute_flag, rs->getString("sub_stitute_flag").c_str());
+			temp_data->component_share = rs->getDouble("component_share");
+			temp_data->premium_ratio = rs->getDouble("premium_ratio");
+			temp_data->creation_cash_substitute = rs->getDouble("creation_cash_substitute");
+			temp_data->redemption_cash_substitute = rs->getDouble("redemption_cash_substitute");
+			local_data.emplace_back(temp_data);
+		}
+		rs->close();
+		connpool->ReleaseConnection(con);
+	};
+	TransToLocal();
+	memset(Sql, 0, 10240);
+	sprintf(Sql, "SELECT * FROM %s WHERE trading_day>=%d AND trading_day<=%d;", map_code_name[11].c_str(), date_start, date_end);
+	TransToLocal();
+	for (auto &it : local_data)
+	{
+		shared_ptr<Etf_component> p = make_shared<Etf_component>(*it);
+		_index[(*it).ukey][(*it).trading_day][(*it).component_id] = p;
+		delete it;
+	}
+}
+
+etf_component_local_sql::~etf_component_local_sql()
+{
+	_index.clear();
+}
+
+bool etf_component_local_sql::is_empty()
+{
+	return _index.empty();
+}
+
+void etf_component_local_sql::show_data()
+{
+}
+
+void etf_component_local_sql::clear()
+{
+	_index.clear();
+}
+
+bool etf_component_local_sql::find(int market_id, int64_t ukey, int date, vector<shared_ptr<Etf_component>>& result)
+{
+	if (ukey != 0)
+	{
+		if (_index.find(ukey) == _index.end())
+		{
+			return false;
+		}
+		else
+		{
+			if (date == 0)
+			{
+				auto max_data = _index[ukey].rbegin();
+				for (auto &com_id:max_data->second)
+				{
+					result.emplace_back(com_id.second);
+				}
+				return true;
+			}
+			else
+			{
+				auto is_date = _index[ukey].find(date);
+				if (is_date != _index[ukey].end())
+				{
+					for (auto &com_id : is_date->second)
+					{
+						result.emplace_back(com_id.second);
+					}
+					return true;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (auto &uk:_index)
+		{
+			if (date == 0)
+			{
+				auto max_date = uk.second.rbegin();
+				for (auto &com_id:max_date->second)
+				{
+					result.emplace_back(com_id.second);
+				}
+			}
+			else
+			{
+				auto is_date = uk.second.find(date);
+				if (is_date != uk.second.end())
+				{
+					for (auto &com_id : is_date->second)
+					{
+						result.emplace_back(com_id.second);
+					}
 				}
 			}
 		}

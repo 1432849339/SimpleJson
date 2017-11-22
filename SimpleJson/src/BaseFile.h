@@ -18,7 +18,7 @@
 #include <vector>
 #include <mutex>
 #include <chrono>
-#include <iomanip>  
+#include <iomanip>
 #include <string>
 #include <tuple>
 #include <map>
@@ -53,6 +53,95 @@ using namespace sql;
 using namespace chrono;
 using namespace ison::base;
 
+struct GetTrday
+{
+public:
+	GetTrday()
+	{
+		pstm = nullptr;
+	}
+
+	int operator()()
+	{
+		tt = time(NULL);
+		pstm = localtime(&tt);
+		if (pstm->tm_wday == 6)//星期6
+		{
+			tt -= 1 * 24 * 60 * 60;
+		}
+		else if (pstm->tm_wday == 0)//星期天
+		{
+			tt -= 2 * 24 * 60 * 60;
+		}
+		else if (pstm->tm_wday == 1)//周一
+		{
+			if (pstm->tm_hour < UPDATE_TIME_HOURS)
+			{
+				tt -= 3 * 24 * 60 * 60;
+			}
+			else if (pstm->tm_hour == UPDATE_TIME_HOURS && pstm->tm_min < UPDATE_TIME_MIN)
+			{
+				tt -= 3 * 24 * 60 * 60;
+			}
+		}
+		else//周二到周五
+		{
+			if (pstm->tm_hour < UPDATE_TIME_HOURS)//判断是否,到达更新时间,没到的交易日为上一天
+			{
+				tt -= 1 * 24 * 60 * 60;
+			}
+			else if (pstm->tm_hour == UPDATE_TIME_HOURS && pstm->tm_min < UPDATE_TIME_MIN)
+			{
+				tt -= 1 * 24 * 60 * 60;
+			}
+		}
+		pstm = localtime(&tt);
+		int year = pstm->tm_year + 1900;
+		int mon = pstm->tm_mon + 1;
+		int day = pstm->tm_mday;
+		return year * 10000 + mon * 100 + day;
+	}
+	int operator-(int day)
+	{
+		(*this)();
+		tt -= day * 24 * 60 * 60;
+		pstm = localtime(&tt);
+		int year = pstm->tm_year + 1900;
+		int mon = pstm->tm_mon + 1;
+		day = pstm->tm_mday;
+		return year * 10000 + mon * 100 + day;
+	}
+	int operator+(int day)
+	{
+		(*this)();
+		tt += day * 24 * 60 * 60;
+		pstm = localtime(&tt);
+		int year = pstm->tm_year + 1900;
+		int mon = pstm->tm_mon + 1;
+		day = pstm->tm_mday;
+		return year * 10000 + mon * 100 + day;
+	}
+
+	int64_t GetSecond()
+	{
+		return time(nullptr);
+	}
+
+	int64_t GetMsTime(int ymd, int hmsu)
+	{
+		struct tm timeinfo = { 0 };
+		timeinfo.tm_year = ymd / 10000 - 1900;
+		timeinfo.tm_mon = (ymd % 10000) / 100 - 1;
+		timeinfo.tm_mday = ymd % 100;
+		timeinfo.tm_hour = hmsu / 10000;
+		timeinfo.tm_min = (hmsu % 10000) / 100;
+		timeinfo.tm_sec = ((hmsu % 10000) % 100);
+		return mktime(&timeinfo);
+	}
+private:
+	struct tm*	pstm = nullptr;
+	time_t		tt;
+};
 struct TgwHead
 {
 	int NodeId;
@@ -66,7 +155,6 @@ struct TgwHead
 	int Conlvl;
 	int Address;
 };
-
 struct ReqHead
 {
 	int				Seqno;		//客户指令编号(不能重复)
@@ -78,7 +166,6 @@ struct ReqHead
 	int				PackSize;	//打包条数限制
 	std::string		Field;		//请求的字段	字段2, 字段3   全部*
 };
-
 enum TYPE
 {
 	MY_UINT = 1,
@@ -255,6 +342,45 @@ struct  component
 	int				cash_substitute_sign;
 	double			cash_substitute_proportion;
 	double			fixed_substitute_money;
+};
+
+struct etf_component
+{
+	int64_t			component_id;
+	char			component_one_code[32];
+	char			component_two_code[32];
+	char			online_creation_code[32];
+	char			online_cash_code[32];
+	char			creation_redemption_cash_code[32];
+	double			creation_redemption_unit;
+	double			estimate_cash_component;
+	double			max_cash_ratio;
+	char			publish[4];
+	char			creation[4];
+	char			redemption[4];
+	int				record_num;
+	int				total_record_num;
+	int				trading_day;
+	int				pre_trading_day;
+	double			cash_component;
+	double			nav_per_cu;
+	double			nav;
+	double			dividend_per_cu;
+	double			creation_limit;
+	double			redemption_limit;
+	double			creation_limit_per_user;
+	double			redemption_limit_per_user;
+	double			net_creation_limit;
+	double			net_redemption_limit;
+	double			net_creation_limit_per_user;
+	double			net_redemption_limit_per_user;
+	int64_t			ukey;
+	char			market_code[32];
+	char			sub_stitute_flag[4];
+	double			component_share;
+	double			premium_ratio;
+	double			creation_cash_substitute;
+	double			redemption_cash_substitute;
 };
 
 template<typename T>
@@ -506,95 +632,44 @@ inline void LocalData<component>::Init()
 	ptr["cash_substitute_proportion"] = (void*)&_data.cash_substitute_proportion;
 	ptr["fixed_substitute_money"] = (void*)&_data.fixed_substitute_money;
 }
-struct GetTrday
+template<>
+inline void LocalData<etf_component>::Init()
 {
-public:
-	GetTrday()
-	{
-		pstm = nullptr;
-	}
-
-	int operator()()
-	{
-		tt = time(NULL);
-		pstm = localtime(&tt);
-		if (pstm->tm_wday == 6)//星期6
-		{
-			tt -= 1 * 24 * 60 * 60;
-		}
-		else if (pstm->tm_wday == 0)//星期天
-		{
-			tt -= 2 * 24 * 60 * 60;
-		}
-		else if (pstm->tm_wday == 1)//周一
-		{
-			if (pstm->tm_hour < UPDATE_TIME_HOURS)
-			{
-				tt -= 3 * 24 * 60 * 60;
-			}
-			else if (pstm->tm_hour == UPDATE_TIME_HOURS && pstm->tm_min < UPDATE_TIME_MIN)
-			{
-				tt -= 3 * 24 * 60 * 60;
-			}
-		}
-		else//周二到周五
-		{
-			if (pstm->tm_hour < UPDATE_TIME_HOURS)//判断是否,到达更新时间,没到的交易日为上一天
-			{
-				tt -= 1 * 24 * 60 * 60;
-			}
-			else if (pstm->tm_hour == UPDATE_TIME_HOURS && pstm->tm_min < UPDATE_TIME_MIN)
-			{
-				tt -= 1 * 24 * 60 * 60;
-			}
-		}
-		pstm = localtime(&tt);
-		int year = pstm->tm_year + 1900;
-		int mon = pstm->tm_mon + 1;
-		int day = pstm->tm_mday;
-		return year * 10000 + mon * 100 + day;
-	}
-	int operator-(int day)
-	{
-		(*this)();
-		tt -= day * 24 * 60 * 60;
-		pstm = localtime(&tt);
-		int year = pstm->tm_year + 1900;
-		int mon = pstm->tm_mon + 1;
-		day = pstm->tm_mday;
-		return year * 10000 + mon * 100 + day;
-	}
-	int operator+(int day)
-	{
-		(*this)();
-		tt += day * 24 * 60 * 60;
-		pstm = localtime(&tt);
-		int year = pstm->tm_year + 1900;
-		int mon = pstm->tm_mon + 1;
-		day = pstm->tm_mday;
-		return year * 10000 + mon * 100 + day;
-	}
-
-	int64_t GetSecond()
-	{
-		return time(nullptr);
-	}
-
-	int64_t GetMsTime(int ymd, int hmsu)
-	{
-		struct tm timeinfo = { 0 };
-		timeinfo.tm_year = ymd / 10000 - 1900;
-		timeinfo.tm_mon = (ymd % 10000) / 100 - 1;
-		timeinfo.tm_mday = ymd % 100;
-		timeinfo.tm_hour = hmsu / 10000;
-		timeinfo.tm_min = (hmsu % 10000) / 100;
-		timeinfo.tm_sec = ((hmsu % 10000) % 100);
-		return mktime(&timeinfo);
-	}
-private:
-	struct tm*	pstm = nullptr;
-	time_t		tt;
-};
+	ptr["component_id"] = (void*)&_data.component_id;
+	ptr["component_one_code"] = (void*)&_data.component_one_code;
+	ptr["component_two_code"] = (void*)&_data.component_two_code;
+	ptr["online_creation_code"] = (void*)&_data.online_creation_code;
+	ptr["online_cash_code"] = (void*)&_data.online_cash_code;
+	ptr["creation_redemption_cash_code"] = (void*)&_data.creation_redemption_cash_code;
+	ptr["creation_redemption_unit"] = (void*)&_data.creation_redemption_unit;
+	ptr["estimate_cash_component"] = (void*)&_data.estimate_cash_component;
+	ptr["max_cash_ratio"] = (void*)&_data.max_cash_ratio;
+	ptr["publish"] = (void*)&_data.publish;
+	ptr["creation"] = (void*)&_data.creation;
+	ptr["redemption"] = (void*)&_data.redemption;
+	ptr["record_num"] = (void*)&_data.record_num;
+	ptr["total_record_num"] = (void*)&_data.total_record_num;
+	ptr["trading_day"] = (void*)&_data.trading_day;
+	ptr["pre_trading_day"] = (void*)&_data.pre_trading_day;
+	ptr["cash_component"] = (void*)&_data.cash_component;
+	ptr["nav_per_cu"] = (void*)&_data.nav_per_cu;
+	ptr["nav"] = (void*)&_data.nav;
+	ptr["dividend_per_cu"] = (void*)&_data.dividend_per_cu;
+	ptr["creation_limit"] = (void*)&_data.creation_limit;
+	ptr["redemption_limit"] = (void*)&_data.redemption_limit;
+	ptr["creation_limit_per_user"] = (void*)&_data.creation_limit_per_user;
+	ptr["redemption_limit_per_user"] = (void*)&_data.redemption_limit_per_user;
+	ptr["net_creation_limit"] = (void*)&_data.net_creation_limit;
+	ptr["net_redemption_limit"] = (void*)&_data.net_redemption_limit;
+	ptr["net_creation_limit_per_user"] = (void*)&_data.net_creation_limit_per_user;
+	ptr["net_redemption_limit_per_user"] = (void*)&_data.net_redemption_limit_per_user;
+	ptr["ukey"] = (void*)&_data.ukey;
+	ptr["market_code"] = (void*)&_data.market_code;
+	ptr["sub_stitute_flag"] = (void*)&_data.sub_stitute_flag;
+	ptr["component_share"] = (void*)&_data.component_share;
+	ptr["premium_ratio"] = (void*)&_data.premium_ratio;
+	ptr["creation_cash_substitute"] = (void*)&_data.creation_cash_substitute;
+	ptr["redemption_cash_substitute"] = (void*)&_data.redemption_cash_substitute;
+}
 
 #endif // !__BASEFILE_H__
-

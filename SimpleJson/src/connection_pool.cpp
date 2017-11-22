@@ -2,7 +2,6 @@
 
 ConnPool *ConnPool::connPool = NULL;
 
-
 Connection * ConnPool::CreateConnection()
 {
 	Connection *conn;
@@ -13,7 +12,7 @@ Connection * ConnPool::CreateConnection()
 	}
 	catch (sql::SQLException& e)
 	{
-		LOG(ERROR)<<"创建连接失败";
+		LOG(ERROR) << "创建连接失败";
 		return NULL;
 	}
 	catch (...)
@@ -27,15 +26,15 @@ void ConnPool::InitConnection(int iInitialSize)
 {
 	Connection*		conn;
 	lock.lock();
-	for (int i = 0; i < iInitialSize; i++) 
+	for (int i = 0; i < iInitialSize; i++)
 	{
 		conn = this->CreateConnection();
-		if (conn) 
+		if (conn)
 		{
 			connList.push_back(conn);
 			++(this->curSize);
 		}
-		else 
+		else
 		{
 			LOG(ERROR) << "创建CONNECTION出错";
 		}
@@ -45,9 +44,9 @@ void ConnPool::InitConnection(int iInitialSize)
 
 void ConnPool::DestoryConnection(Connection * conn)
 {
-	if (conn) 
+	if (conn)
 	{
-		try 
+		try
 		{
 			conn->close();
 		}
@@ -103,7 +102,7 @@ Connection * ConnPool::GetConnection()
 	Connection*		con;
 	lock.lock();
 	if (connList.size() > 0)  //连接池容器中还有连接
-	{  
+	{
 		con = connList.front(); //得到第一个连接
 		connList.pop_front();   //移除第一个连接
 		--curSize;
@@ -121,7 +120,7 @@ Connection * ConnPool::GetConnection()
 		lock.unlock();
 		return con;
 	}
-	else 
+	else
 	{
 		LOG(WARNING) << "##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
 		con = this->CreateConnection();
@@ -135,7 +134,7 @@ Connection * ConnPool::GetConnection()
 			}
 		}
 		LOG(WARNING) << "##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
-		lock.unlock();	
+		lock.unlock();
 		return con;
 	}
 }
@@ -161,13 +160,13 @@ void ConnPool::ReleaseConnection(Connection* conn)
 	}
 }
 
-ConnPool * ConnPool::GetInstance(std::string _url,std::string _user,std::string password,int conn_count)
+ConnPool * ConnPool::GetInstance(std::string _url, std::string _user, std::string password, int conn_count)
 {
 	if (connPool == nullptr)
 	{
 		connPool = new ConnPool(_url, _user, password, conn_count);
 	}
-	LOG(INFO) << "创建了"<<conn_count<<"个连接!!!";
+	LOG(INFO) << "创建了" << conn_count << "个连接!!!";
 	return connPool;
 }
 

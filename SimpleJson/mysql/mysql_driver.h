@@ -22,8 +22,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-
-
 #ifndef _MYSQL_DRIVER_H_
 #define _MYSQL_DRIVER_H_
 
@@ -33,63 +31,61 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 extern "C"
 {
-CPPCONN_PUBLIC_FUNC void  * sql_mysql_get_driver_instance();
+	CPPCONN_PUBLIC_FUNC void  * sql_mysql_get_driver_instance();
 }
 
 namespace sql
 {
-namespace mysql
-{
-namespace NativeAPI
-{
-	class NativeDriverWrapper;
-}
+	namespace mysql
+	{
+		namespace NativeAPI
+		{
+			class NativeDriverWrapper;
+		}
 
-//class sql::mysql::NativeAPI::NativeDriverWrapper;
+		//class sql::mysql::NativeAPI::NativeDriverWrapper;
 
-class CPPCONN_PUBLIC_FUNC MySQL_Driver : public sql::Driver
-{
-	boost::scoped_ptr< ::sql::mysql::NativeAPI::NativeDriverWrapper > proxy;
+		class CPPCONN_PUBLIC_FUNC MySQL_Driver : public sql::Driver
+		{
+			boost::scoped_ptr< ::sql::mysql::NativeAPI::NativeDriverWrapper > proxy;
 
-public:
-	MySQL_Driver();
-	MySQL_Driver(const ::sql::SQLString & clientLib);
+		public:
+			MySQL_Driver();
+			MySQL_Driver(const ::sql::SQLString & clientLib);
 
-	virtual ~MySQL_Driver();
+			virtual ~MySQL_Driver();
 
-	sql::Connection * connect(const sql::SQLString& hostName, const sql::SQLString& userName, const sql::SQLString& password);
+			sql::Connection * connect(const sql::SQLString& hostName, const sql::SQLString& userName, const sql::SQLString& password);
 
-	sql::Connection * connect(sql::ConnectOptionsMap & options);
+			sql::Connection * connect(sql::ConnectOptionsMap & options);
 
-	int getMajorVersion();
+			int getMajorVersion();
 
-	int getMinorVersion();
+			int getMinorVersion();
 
-	int getPatchVersion();
+			int getPatchVersion();
 
-	const sql::SQLString & getName();
+			const sql::SQLString & getName();
 
-	void threadInit();
+			void threadInit();
 
-	void threadEnd();
+			void threadEnd();
 
-private:
-	/* Prevent use of these */
-	MySQL_Driver(const MySQL_Driver &);
-	void operator=(MySQL_Driver &);
-};
+		private:
+			/* Prevent use of these */
+			MySQL_Driver(const MySQL_Driver &);
+			void operator=(MySQL_Driver &);
+		};
 
-/** We do not hide the function if MYSQLCLIENT_STATIC_BINDING(or anything else) not defined
-    because the counterpart C function is declared in the cppconn and is always visible.
-    If dynamic loading is not enabled then its result is just like of get_driver_instance()
-*/
-CPPCONN_PUBLIC_FUNC MySQL_Driver * get_driver_instance_by_name(const char * const clientlib);
+		/** We do not hide the function if MYSQLCLIENT_STATIC_BINDING(or anything else) not defined
+			because the counterpart C function is declared in the cppconn and is always visible.
+			If dynamic loading is not enabled then its result is just like of get_driver_instance()
+		*/
+		CPPCONN_PUBLIC_FUNC MySQL_Driver * get_driver_instance_by_name(const char * const clientlib);
 
-CPPCONN_PUBLIC_FUNC MySQL_Driver * get_driver_instance();
-static inline MySQL_Driver * get_mysql_driver_instance() { return get_driver_instance(); }
-
-
-} /* namespace mysql */
+		CPPCONN_PUBLIC_FUNC MySQL_Driver * get_driver_instance();
+		static inline MySQL_Driver * get_mysql_driver_instance() { return get_driver_instance(); }
+	} /* namespace mysql */
 } /* namespace sql */
 
 #endif // _MYSQL_DRIVER_H_

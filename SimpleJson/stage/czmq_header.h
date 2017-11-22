@@ -1,14 +1,14 @@
 /* =====================================================================================
  *         Author:  Zhang Wen(zhangwen@szkingdom.com)
  *        Created:  2014-8-28 16:05
- *    Description:  
+ *    Description:
  * =====================================================================================
  */
 
 #ifndef ISON_BASE_CZMQ_HEADER_H_
 #define ISON_BASE_CZMQ_HEADER_H_
 
-//  Opaque class structures to allow forward references
+ //  Opaque class structures to allow forward references
 typedef struct _zactor_t zactor_t;
 typedef struct _zauth_t zauth_t;
 typedef struct _zbeacon_t zbeacon_t;

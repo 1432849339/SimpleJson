@@ -19,7 +19,7 @@ private:
 	map<int64_t, shared_ptr<Contract>>		_index;
 };
 
-class currency_local_sql 
+class currency_local_sql
 {
 public:
 	typedef LocalData<currency> Currency;
@@ -34,7 +34,7 @@ private:
 	map<int, shared_ptr<Currency>>	_index;
 };
 
-class dailyclear_local_sql 
+class dailyclear_local_sql
 {
 public:
 	typedef LocalData<dailyclear> Dailyclear;
@@ -51,7 +51,7 @@ private:
 	map<int64_t, map<int, shared_ptr<Dailyclear>>> _index;
 };
 
-class Market_local_sql 
+class Market_local_sql
 {
 public:
 	typedef LocalData<market> Market;
@@ -66,7 +66,7 @@ private:
 	map<int, shared_ptr<Market>>   _index;
 };
 
-class secumatre_local_sql 
+class secumatre_local_sql
 {
 public:
 	typedef LocalData<secumaster> Secumaster;
@@ -83,7 +83,7 @@ private:
 	map<int, map<int64_t, map<int, shared_ptr<Secumaster>>>>  _index;
 };
 
-class tssyscalender_local_sql 
+class tssyscalender_local_sql
 {
 public:
 	typedef LocalData<tssyscalender> Tssyscalender;
@@ -143,7 +143,7 @@ private:
 	map<int, map<int, shared_ptr<Calendar>>>		_index;
 };
 
-class component_local_sql 
+class component_local_sql
 {
 public:
 	typedef LocalData<component> Component;
@@ -157,6 +157,21 @@ public:
 private:
 	map<int64_t, map<int, shared_ptr<Component>>>		_index;
 };
+
+class etf_component_local_sql
+{
+public:
+	typedef LocalData<etf_component> Etf_component;
+public:
+	etf_component_local_sql();
+	~etf_component_local_sql();
+	bool is_empty();
+	void show_data();
+	void clear();
+	bool find(int market_id, int64_t ukey, int date, vector<shared_ptr<Etf_component>>& result);
+protected:
+private:
+	map<int64_t, map<int, map<int64_t, shared_ptr<Etf_component>>>>		_index;
+};
+
 #endif
-
-

@@ -8,7 +8,6 @@ extern DataBase						local;
 
 UKService::UKService(std::string id_) :Actor(id_)
 {
-
 }
 
 int UKService::OnStart(ActorContext &)
@@ -47,7 +46,6 @@ int UKService::OnEvent(Event & e)
 	return 0;
 }
 
-
 inline Query::Query(string& smess)
 {
 	err_num = 0;
@@ -73,7 +71,7 @@ inline tuple<bool, vector<string>> Query::make_choice_queuy()
 	GetTrday tt;
 	if (is_init_seccuss && date == tt())//本地数据库初始化完成
 	{
-		if (jsonstream.GetReqHead().TableType == 3 || jsonstream.GetReqHead().TableType == 5 || jsonstream.GetReqHead().TableType == 10)//与时间相关的表
+		if (jsonstream.GetReqHead().TableType == 3 || jsonstream.GetReqHead().TableType == 5 || jsonstream.GetReqHead().TableType == 10 || jsonstream.GetReqHead().TableType == 11)//与时间相关的表
 		{
 			if ((jsonstream.GetReqHead().Date == 0) || ((jsonstream.GetReqHead().Date <= date) && (jsonstream.GetReqHead().Date >= tt - DATE_DISTANCE)))
 				//判断查询的时间范围是否在本地数据库的范围内
@@ -133,7 +131,7 @@ bool Query::query_by_sql()
 	char Sql[10240]{ 0 };
 	TgwHead& tgw_head = jsonstream.GetTgwHead();
 	ReqHead& req_head = jsonstream.GetReqHead();
-	std::map<std::string,int32_t>& Parameter = jsonstream.GetParameter();
+	std::map<std::string, int32_t>& Parameter = jsonstream.GetParameter();
 	Connection*			con = nullptr;
 	Statement*			state = nullptr;
 	sql::ResultSet*		rs = nullptr;
@@ -149,7 +147,7 @@ bool Query::query_by_sql()
 		}
 		else
 		{
-			sprintf(Sql, "SELECT * FROM %s a WHERE a.contract_id=%ld;",map_code_name[req_head.TableType].c_str(), req_head.SecurityID);
+			sprintf(Sql, "SELECT * FROM %s a WHERE a.contract_id=%ld;", map_code_name[req_head.TableType].c_str(), req_head.SecurityID);
 		}
 		break;
 	case 2://currency
@@ -159,7 +157,7 @@ bool Query::query_by_sql()
 		}
 		else
 		{
-			sprintf(Sql, "SELECT * FROM %s a WHERE a.currency_id=%ld;",map_code_name[req_head.TableType].c_str(), req_head.SecurityID);
+			sprintf(Sql, "SELECT * FROM %s a WHERE a.currency_id=%ld;", map_code_name[req_head.TableType].c_str(), req_head.SecurityID);
 		}
 		break;
 	case 3://dailyclear
@@ -243,7 +241,7 @@ bool Query::query_by_sql()
 			{
 				if (req_head.Date == 0)
 				{
-					sprintf(Sql, "SELECT * ,DATE_FORMAT(last_update,'%%Y%%m%%d%%H%%I%%S') AS lastupdate FROM %s a WHERE a.ukey=%ld ORDER BY a.trading_day DESC LIMIT 1;", map_code_name[req_head.TableType].c_str(),req_head.SecurityID);
+					sprintf(Sql, "SELECT * ,DATE_FORMAT(last_update,'%%Y%%m%%d%%H%%I%%S') AS lastupdate FROM %s a WHERE a.ukey=%ld ORDER BY a.trading_day DESC LIMIT 1;", map_code_name[req_head.TableType].c_str(), req_head.SecurityID);
 				}
 				else
 				{
@@ -275,14 +273,14 @@ bool Query::query_by_sql()
 			}
 			else
 			{
-				sprintf(Sql, "SELECT * ,DATE_FORMAT(last_update,'%%Y%%m%%d%%H%%I%%S') AS lastupdate FROM %s a WHERE a.ukey=%ld AND a.market_id=%d;",map_code_name[req_head.TableType].c_str(), req_head.SecurityID, req_head.MarketID);
+				sprintf(Sql, "SELECT * ,DATE_FORMAT(last_update,'%%Y%%m%%d%%H%%I%%S') AS lastupdate FROM %s a WHERE a.ukey=%ld AND a.market_id=%d;", map_code_name[req_head.TableType].c_str(), req_head.SecurityID, req_head.MarketID);
 			}
 		}
 		else
 		{
 			if (req_head.SecurityID == 0)
 			{
-				sprintf(Sql, "SELECT * ,DATE_FORMAT(last_update,'%%Y%%m%%d%%H%%I%%S') AS lastupdate FROM %s;",map_code_name[req_head.TableType].c_str());
+				sprintf(Sql, "SELECT * ,DATE_FORMAT(last_update,'%%Y%%m%%d%%H%%I%%S') AS lastupdate FROM %s;", map_code_name[req_head.TableType].c_str());
 			}
 			else
 			{
@@ -291,7 +289,7 @@ bool Query::query_by_sql()
 		}
 		break;
 	case 8://uktype
-		sprintf(Sql, "SELECT * FROM %s;",map_code_name[req_head.TableType].c_str());
+		sprintf(Sql, "SELECT * FROM %s;", map_code_name[req_head.TableType].c_str());
 		break;
 	case 9://calendar  对时间铭感,需要处理
 		error_str.emplace_back("暂时不支持此表的查询");
@@ -313,7 +311,7 @@ bool Query::query_by_sql()
 		//{
 		//	if (req_head.Date == 0)
 		//	{
-		//		
+		//
 		//		sprintf(Sql, "SELECT * FROM %s a INNER JOIN(SELECT `market_id`,MAX(`date`)AS `date` FROM %s GROUP  BY `market_id`)b ON a.market_id = b.market_id AND a.`date`=b.date;; ", map_code_name[req_head.TableType].c_str(), map_code_name[req_head.TableType].c_str());
 		//		//sprintf(Sql, "SELECT * FROM %s ORDER BY `date` DESC LIMIT 1;",map_code_name[req_head.TableType].c_str());
 		//	}
@@ -351,13 +349,36 @@ bool Query::query_by_sql()
 			}
 		}*/
 		break;
+	case 11:
+		if (req_head.SecurityID == 0)
+		{
+			if (req_head.Date == 0)
+			{
+				sprintf(Sql, "SELECT * FROM %s a INNER JOIN (SELECT ukey,MAX(`trading_day`) trading_day FROM %s  GROUP BY ukey) b ON a.`ukey`=b.`ukey` AND a.`trading_day`=b.`trading_day`;", map_code_name[req_head.TableType].c_str(), map_code_name[req_head.TableType].c_str());
+			}
+			else
+			{
+				sprintf(Sql, "SELECT * FROM %s a WHERE a.trading_day=%d;", map_code_name[req_head.TableType].c_str(), req_head.Date);
+			}
+		}
+		else
+		{
+			if (req_head.Date == 0)
+			{
+				sprintf(Sql, "SELECT * FROM %s a  WHERE a.ukey=%ld AND a.`trading_day` IN (SELECT MAX(trading_day) FROM %s WHERE ukey = %ld); ", map_code_name[req_head.TableType].c_str(),req_head.SecurityID, map_code_name[req_head.TableType].c_str(), req_head.SecurityID);
+			}
+			else
+			{
+				sprintf(Sql, "SELECT *FROM %s a WHERE a.`ukey`=%ld AND trading_day = %d; ", map_code_name[req_head.TableType].c_str(), req_head.SecurityID, req_head.Date);
+			}
+		}
 	default:
 		break;
 	}
 	LOG(INFO) << Sql;
 	rs = state->executeQuery(Sql);
 	LOG(INFO) << "Retrieved " << rs->rowsCount() << " row(s)." << std::endl;
-	int pCount = rs->rowsCount();
+	auto pCount = rs->rowsCount();
 	if (pCount == 0)
 	{
 		error_str.emplace_back("表中没有数据");
@@ -757,6 +778,14 @@ bool Query::query_by_local()
 			package(&tgw_head, &req_head, result_10);
 		}();
 		break;
+	case 11:
+		[&]() {
+			vector<shared_ptr<etf_component_local_sql::Etf_component>>				result_11;
+			shared_ptr<etf_component_local_sql> etf_component_local = local.etf_component_local;
+			etf_component_local->find(req_head.MarketID, req_head.SecurityID, req_head.Date, result_11);
+			package(&tgw_head, &req_head, result_11);
+		}();
+		break;
 	default:
 		break;
 	}
@@ -849,6 +878,7 @@ void Update_local_data()
 			thread_update.emplace_back([&]() {local.uktype_local.reset(new uktype_local_sql); });
 			//thread_update.emplace_back([&]() {local.calendar_local.reset(new calendar_local_sql); });
 			//thread_update.emplace_back([&]() {local.component_local.reset(new component_local_sql); });
+			thread_update.emplace_back([&]() {local.etf_component_local.reset(new etf_component_local_sql); });
 			for (auto &th : thread_update)
 			{
 				th.join();

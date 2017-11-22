@@ -57,8 +57,7 @@ int GetDate()
 	return year * 10000 + mon * 100 + day;
 }
 
-
-int main(int argc,char **argv)
+int main(int argc, char **argv)
 {
 	ison::base::iblog_init(argv[0], "log");
 	ison::base::iblog_v(1002);

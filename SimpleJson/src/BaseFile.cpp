@@ -12,6 +12,7 @@ std::map<int, std::string> map_code_name
 	{ 8,"ukdb09.uktype" },
 	{ 9,"ukdb09.calendar" },
 	{ 10,"ukdb09.component" },
+	{ 11,"ukdb09.etfcomponent" },
 };
 
 std::map<std::string, int> CONTRACT
@@ -174,7 +175,6 @@ std::map<std::string, int> CALENDAR
 
 std::map<std::string, int> COMPONENT
 {
-
 	{ "component_id", MY_INT64 },
 	{ "update_date", MY_INT },
 	{ "ukey", MY_INT64 },
@@ -182,4 +182,43 @@ std::map<std::string, int> COMPONENT
 	{ "cash_substitute_sign", MY_INT },
 	{ "cash_substitute_proportion", MY_DOUBLE },
 	{ "fixed_substitute_money", MY_DOUBLE },
+};
+
+std::map<std::string, int>  ETF_COMPONENT
+{
+	{ "component_id",MY_INT64 },
+	{ "component_one_code",MY_CHAR },
+	{ "component_two_code",MY_CHAR },
+	{ "online_creation_code",MY_CHAR },
+	{ "online_cash_code",MY_CHAR },
+	{ "creation_redemption_cash_code",MY_CHAR },
+	{ "creation_redemption_unit",MY_DOUBLE },
+	{ "estimate_cash_component",MY_DOUBLE },
+	{ "max_cash_ratio",MY_DOUBLE },
+	{ "publish",MY_CHAR },
+	{ "creation",MY_CHAR },
+	{ "redemption",MY_CHAR },
+	{ "record_num",MY_INT },
+	{ "total_record_num",MY_INT },
+	{ "trading_day",MY_INT },
+	{ "pre_trading_day",MY_INT },
+	{ "cash_component",MY_DOUBLE },
+	{ "nav_per_cu",MY_DOUBLE },
+	{ "nav",MY_DOUBLE },
+	{ "dividend_per_cu",MY_DOUBLE },
+	{ "creation_limit",MY_DOUBLE },
+	{ "redemption_limit",MY_DOUBLE },
+	{ "creation_limit_per_user",MY_DOUBLE },
+	{ "redemption_limit_per_user",MY_DOUBLE },
+	{ "net_creation_limit",MY_DOUBLE },
+	{ "net_redemption_limit",MY_DOUBLE },
+	{ "net_creation_limit_per_user",MY_DOUBLE },
+	{ "net_redemption_limit_per_user",MY_DOUBLE },
+	{ "ukey",MY_INT64 },
+	{ "market_code",MY_CHAR },
+	{ "sub_stitute_flag", MY_CHAR },
+	{ "component_share",MY_DOUBLE },
+	{ "premium_ratio",MY_DOUBLE },
+	{ "creation_cash_substitute",MY_DOUBLE },
+	{ "redemption_cash_substitute",MY_DOUBLE },
 };

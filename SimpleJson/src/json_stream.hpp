@@ -3,7 +3,7 @@
 
 #include "BaseFile.h"
 
-class JsonException{
+class JsonException {
 public:
 	JsonException()
 	{
@@ -140,7 +140,7 @@ public:
 			else
 			{
 				rapidjson::Document::AllocatorType &allocator = m_document.GetAllocator();
-				req_head.AddMember("Seqno", m_document["Seqno"],allocator);
+				req_head.AddMember("Seqno", m_document["Seqno"], allocator);
 				req_head.AddMember("SecurityID", m_document["SecurityID"], allocator);
 				req_head.AddMember("TableType", m_document["TableType"], allocator);
 				req_head.AddMember("MarketID", m_document["MarketID"], allocator);
@@ -170,7 +170,7 @@ public:
 				return JsonException(-7, "没有字段: Field");
 			}
 			m_reqhead.Seqno = req_head["Seqno"].GetInt();
-			m_reqhead.SecurityID = req_head["SecurityID"].GetInt64(); 
+			m_reqhead.SecurityID = req_head["SecurityID"].GetInt64();
 			m_reqhead.TableType = req_head["TableType"].GetInt();
 			m_reqhead.MarketID = req_head["MarketID"].GetInt();
 			m_reqhead.Date = req_head["Date"].GetInt();
@@ -192,6 +192,7 @@ public:
 		extern std::map<std::string, int> UKTYPE;
 		extern std::map<std::string, int> CALENDAR;
 		extern std::map<std::string, int> COMPONENT;
+		extern std::map<std::string, int> ETF_COMPONENT;
 		if (m_reqhead.Field == "*")
 		{
 			switch (m_reqhead.TableType)
@@ -225,6 +226,9 @@ public:
 				break;
 			case 10:
 				m_parameter.insert(COMPONENT.begin(), COMPONENT.end());
+				break;
+			case 11:
+				m_parameter.insert(ETF_COMPONENT.begin(), ETF_COMPONENT.end());
 				break;
 			default:
 				LOG(ERROR) << "TableType 超出范围";
@@ -289,13 +293,14 @@ protected:
 		extern std::map<std::string, int> UKTYPE;
 		extern std::map<std::string, int> CALENDAR;
 		extern std::map<std::string, int> COMPONENT;
+		extern std::map<std::string, int> ETF_COMPONENT;
 
 		auto func = [&](std::map<std::string, int>& table)->JsonException {
 			auto index = table.find(lable);
 			if (index != table.end())
 			{
 				m_parameter.emplace(index->first, index->second);
-				return JsonException(0,"");
+				return JsonException(0, "");
 			}
 			else
 			{
@@ -336,6 +341,9 @@ protected:
 			break;
 		case 10://"ukdb2017.com";
 			ret = func(COMPONENT);
+			break;
+		case 11:
+			ret = func(ETF_COMPONENT);
 			break;
 		default:
 			std::string temp = "TableType 超出范围";

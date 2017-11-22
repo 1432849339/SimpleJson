@@ -22,8 +22,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-
-
 #ifndef _SQL_STRING_H_
 #define _SQL_STRING_H_
 
@@ -39,8 +37,8 @@ namespace sql
 
 	public:
 #ifdef _WIN32
-        //TODO something less dirty-hackish.
-        static const size_t npos = static_cast<std::string::size_type>(-1);
+		//TODO something less dirty-hackish.
+		static const size_t npos = static_cast<std::string::size_type>(-1);
 #else
 		static const size_t npos = std::string::npos;
 #endif
@@ -86,7 +84,7 @@ namespace sql
 			possibly operator* - will look even more like smart ptr */
 		std::string * operator ->()
 		{
-			return & realStr;
+			return &realStr;
 		}
 
 		int compare(const SQLString& str) const
@@ -172,40 +170,36 @@ namespace sql
 			realStr += op2.realStr;
 			return *this;
 		}
-};
+	};
 
+	/*
+	  Operators that can and have to be not a member.
+	*/
+	inline const SQLString operator+(const SQLString & op1, const SQLString & op2)
+	{
+		return sql::SQLString(op1.asStdString() + op2.asStdString());
+	}
 
-/*
-  Operators that can and have to be not a member.
-*/
-inline const SQLString operator+(const SQLString & op1, const SQLString & op2)
-{
-	return sql::SQLString(op1.asStdString() + op2.asStdString());
-}
+	inline bool operator ==(const SQLString & op1, const SQLString & op2)
+	{
+		return (op1.asStdString() == op2.asStdString());
+	}
 
-inline bool operator ==(const SQLString & op1, const SQLString & op2)
-{
-	return (op1.asStdString() == op2.asStdString());
-}
+	inline bool operator !=(const SQLString & op1, const SQLString & op2)
+	{
+		return (op1.asStdString() != op2.asStdString());
+	}
 
-inline bool operator !=(const SQLString & op1, const SQLString & op2)
-{
-	return (op1.asStdString() != op2.asStdString());
-}
-
-inline bool operator <(const SQLString & op1, const SQLString & op2)
-{
-	return op1.asStdString() < op2.asStdString();
-}
-
-
+	inline bool operator <(const SQLString & op1, const SQLString & op2)
+	{
+		return op1.asStdString() < op2.asStdString();
+	}
 }// namespace sql
-
 
 namespace std
 {
 	// operator << for SQLString output
-	inline ostream & operator << (ostream & os, const sql::SQLString & str )
+	inline ostream & operator << (ostream & os, const sql::SQLString & str)
 	{
 		return os << str.asStdString();
 	}

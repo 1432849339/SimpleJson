@@ -1,7 +1,7 @@
 /* =====================================================================================
  *         Author:  Zhang Wen(zhangwen@szkingdom.com)
  *        Created:  2014-6-5 17:51
- *    Description:  
+ *    Description:
  * =====================================================================================
  */
 
@@ -14,17 +14,16 @@
 #include <memory>
 
 namespace ison {
-namespace base {
-
+	namespace base {
 #define IB_VERSION_MAJOR 0
 #define IB_VERSION_MINOR 6
 #define IB_VERSION_BUILD 2
 
-int ib_version_major();
-int ib_version_minor();
-int ib_version_build();
-int ib_version();
-std::string ib_version_string();
+		int ib_version_major();
+		int ib_version_minor();
+		int ib_version_build();
+		int ib_version();
+		std::string ib_version_string();
 
 #define DEFINE_SHARED_PTR(TypeName) \
   typedef std::shared_ptr<TypeName> TypeName##Ptr
@@ -32,8 +31,7 @@ std::string ib_version_string();
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);                \
   void operator=(const TypeName&)
-
-}
+	}
 }
 
 #ifdef _MSC_VER

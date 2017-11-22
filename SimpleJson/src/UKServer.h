@@ -330,9 +330,9 @@ struct DataBase
 	shared_ptr<uktype_local_sql>		uktype_local;
 	shared_ptr<calendar_local_sql>		calendar_local;
 	shared_ptr<component_local_sql>		component_local;
-}; 
+	shared_ptr<etf_component_local_sql> etf_component_local;
+};
 
 void Update_local_data();
 
 #endif
-

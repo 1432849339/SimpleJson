@@ -39,11 +39,10 @@
 #include <time.h>
 
 namespace google {
-
 #include "glog/log_severity.h"
 #include "glog/vlog_is_on.h"
 
-// Annoying stuff for windows -- makes sure clients can import these functions
+	// Annoying stuff for windows -- makes sure clients can import these functions
 #ifndef GOOGLE_GLOG_DLL_DECL
 # if defined(_WIN32) && !defined(__CYGWIN__)
 #   define GOOGLE_GLOG_DLL_DECL  __declspec(dllimport)
@@ -162,24 +161,23 @@ namespace google {
 
 // Stub log function used to work around for unused variable warnings when
 // building with STRIP_LOG > 0.
-static inline void RawLogStub__(int /* ignored */, ...) {
-}
+	static inline void RawLogStub__(int /* ignored */, ...) {
+	}
 
-// Helper function to implement RAW_LOG and RAW_VLOG
-// Logs format... at "severity" level, reporting it
-// as called from file:line.
-// This does not allocate memory or acquire locks.
-GOOGLE_GLOG_DLL_DECL void RawLog__(LogSeverity severity,
-                                   const char* file,
-                                   int line,
-                                   const char* format, ...)
-   __attribute__((__format__ (__printf__, 4, 5)));
+	// Helper function to implement RAW_LOG and RAW_VLOG
+	// Logs format... at "severity" level, reporting it
+	// as called from file:line.
+	// This does not allocate memory or acquire locks.
+	GOOGLE_GLOG_DLL_DECL void RawLog__(LogSeverity severity,
+		const char* file,
+		int line,
+		const char* format, ...)
+		__attribute__((__format__(__printf__, 4, 5)));
 
-// Hack to propagate time information into this module so that
-// this module does not have to directly call localtime_r(),
-// which could allocate memory.
-GOOGLE_GLOG_DLL_DECL void RawLog__SetLastTime(const struct tm& t, int usecs);
-
+	// Hack to propagate time information into this module so that
+	// this module does not have to directly call localtime_r(),
+	// which could allocate memory.
+	GOOGLE_GLOG_DLL_DECL void RawLog__SetLastTime(const struct tm& t, int usecs);
 }
 
 #endif  // BASE_RAW_LOGGING_H_
